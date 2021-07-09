@@ -5,7 +5,7 @@ int WinMain()
   sf::RenderWindow window(sf::VideoMode(500, 650), "SFML works!");
   sf::CircleShape shape(100.f);
   shape.setFillColor(sf::Color::Green);
-
+ 
   while (window.isOpen())
   {
     sf::Event event;
@@ -16,7 +16,7 @@ int WinMain()
     }
 
     window.clear();
-    window.draw(shape);
+    window.draw();
     window.display();
   }
 

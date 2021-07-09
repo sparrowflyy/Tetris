@@ -9,5 +9,5 @@ GWindow::GWindow(int iWidth, int iHeight, std::string& iTitle) {
 }
 
 void GWindow::draw(const GObj& iGameObj) const {
-	win->draw(*iGameObj.m_sprites[iGameObj.curIdx]);
+	win->draw(iGameObj.getDrawable());
 }
