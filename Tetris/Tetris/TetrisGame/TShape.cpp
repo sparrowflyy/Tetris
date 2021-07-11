@@ -1,29 +1,30 @@
 #include "TShape.h"
 
-Tetris::TShape::TShape(int iType, const sf::Vector2i& iCenter) : GObj(), type(iType) {
+TShape::TShape(int iType, const sf::Vector2i& iCenter) : GObj(), type(iType) {
+	parts = 4;
 	switch (iType)
 	{
-	case ShapeType::Line:
+	case Tetris::ShapeType::Line:
 		{
 			initLine(iCenter);
 			break;
 		}
-	case ShapeType::Rect:
+	case Tetris::ShapeType::Rect:
 		{
 			initRect(iCenter);
 			break;
 		}
-	case ShapeType::T:
+	case Tetris::ShapeType::T:
 		{
 			initT(iCenter);
 			break;
 		}
-	case ShapeType::ZigZagLeft:
+	case Tetris::ShapeType::ZigZagLeft:
 		{
 			initZigZagLeft(iCenter);
 			break;
 		}
-	case ShapeType::ZigZagRight:
+	case Tetris::ShapeType::ZigZagRight:
 		{
 			initZigZagRight(iCenter);
 			break;
@@ -35,42 +36,49 @@ Tetris::TShape::TShape(int iType, const sf::Vector2i& iCenter) : GObj(), type(iT
 	}
 	
 }
-const std::vector<std::shared_ptr<sf::RectangleShape>>& Tetris::TShape::getRects() const {
-	return m_rects;
+
+
+
+
+
+
+const sf::Drawable* TShape::getDrawable(int idx) const {
+	return m_rects[idx].get();
 }
 
-
-void Tetris::TShape::initLine(const sf::Vector2i& iCenter)
+void TShape::initLine(const sf::Vector2i& iCenter)
 {
 	center = iCenter;
 	for (int i = 0; i < Tetris::shapeParts; i++) {
-		m_rects.push_back(std::make_shared<sf::RectangleShape>(sf::Vector2f(50,50)));
+		m_rects.push_back(std::make_shared<sf::RectangleShape>(sf::Vector2f(Tetris::rectSize,Tetris::rectSize)));
 		m_rects.back()->setFillColor(sf::Color::Cyan);
 		m_rects.back()->setOutlineColor(sf::Color::Magenta);
-		m_rects.back()->setOutlineThickness(1);
+		m_rects.back()->setOutlineThickness(-Tetris::outlineThick);
 	}
-	m_rects[0]->setPosition(center.x + 25.0, center.y);
-	m_rects[1]->setPosition(center.x + 75.0, center.y);
-	m_rects[2]->setPosition(center.x - 25.0, center.y);
-	m_rects[3]->setPosition(center.x - 75.0, center.y);
+	m_rects[0]->setPosition(center.x - 3 * Tetris::rectSize / 2, center.y);
+	m_rects[1]->setPosition(center.x - Tetris::rectSize / 2, center.y);
+	m_rects[2]->setPosition(center.x + Tetris::rectSize/2 , center.y);
+	m_rects[3]->setPosition(center.x + 3*Tetris::rectSize/2, center.y);
+
+	
 
 }
 
-void Tetris::TShape::initRect(const sf::Vector2i& iCenter)
+void TShape::initRect(const sf::Vector2i& iCenter)
 {
 	
 }
 
-void Tetris::TShape::initT(const sf::Vector2i& iCenter)
+void TShape::initT(const sf::Vector2i& iCenter)
 {
 	
 }
 
-void Tetris::TShape::initZigZagLeft(const sf::Vector2i& iCenter)
+void TShape::initZigZagLeft(const sf::Vector2i& iCenter)
 {
 	
 }
-void Tetris::TShape::initZigZagRight(const sf::Vector2i& iCenter)
+void TShape::initZigZagRight(const sf::Vector2i& iCenter)
 {
 	
 }

@@ -3,9 +3,9 @@
 
 void GLoop::loop() {
 
-  Tetris::TShape line(Tetris::ShapeType::Line);
-	
-  m_obj.push_back(std::make_shared<Tetris::TShape>(line));
+  TShape line(Tetris::ShapeType::Line);
+  sf::Clock clock;
+  m_obj.push_back(std::make_shared<TShape>(line));
   while (gWin.win->isOpen())
   {
     sf::Event event;
@@ -16,9 +16,8 @@ void GLoop::loop() {
     }
 
 		gWin.win->clear();
-    for (int i = 0; i < m_obj.size(); i++)
-    {
-      gWin.draw(*m_obj[i]);
+    for (int i = 0; i < m_obj.size(); i++) {
+        gWin.draw(*m_obj[i]);
     }
     gWin.win->display();
   }
