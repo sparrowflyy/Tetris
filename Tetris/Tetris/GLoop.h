@@ -1,6 +1,6 @@
 #pragma once
 #include "GWindow.h"
-#include "GData.h"
+
 
 class GLoop final
 {
@@ -10,5 +10,5 @@ public:
 	~GLoop() = default;
 private:
 	GWindow gWin;
-	GData data;
+	std::vector<std::shared_ptr<GObj>> m_obj;
 };

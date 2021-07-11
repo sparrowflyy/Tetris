@@ -16,7 +16,10 @@ void GLoop::loop() {
     }
 
     gWin.win->clear();
-    //gWin.draw(shape);
+    for (int i = 0; i < m_obj.size(); i++)
+    {
+      gWin.draw(*m_obj[i]);
+    }
     gWin.win->display();
   }
 }
