@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "GEvent.h"
+#include "GWindow.h"
 class GObj
 {
 public:
@@ -22,7 +23,7 @@ public:
 	}
 
 	void addEvent(const GEvent& iEvent) { m_events.push_back(iEvent); }
-	virtual const std::vector<sf::Drawable*>& getDrawable() const { return {}; }
+	virtual void drawObj(GWindow& iWin) { return; }
 	virtual void update(float iTime) {}
 	virtual ~GObj() {
 		m_textures.clear();

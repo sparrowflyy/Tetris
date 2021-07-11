@@ -9,10 +9,9 @@ GWindow::GWindow(int iWidth, int iHeight, std::string& iTitle) {
 }
 
 void GWindow::draw(const GObj& iGameObj) const {
-	auto arr = iGameObj.getDrawable();
+	const std::vector<std::shared_ptr<sf::RectangleShape>>& arr = iGameObj.getRects();
 	for (int i = 0; i < arr.size(); i++)
 	{
 		win->draw(*arr[i]);
-		
 	}
 }

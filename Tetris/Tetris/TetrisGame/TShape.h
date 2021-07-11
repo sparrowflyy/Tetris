@@ -15,9 +15,9 @@ namespace Tetris {
 	class TShape : public GObj
 	{
 	public:
-		TShape(int iType, const sf::Vector2i& iCenter = sf::Vector2i(200, 0));
+		TShape(int iType, const sf::Vector2i& iCenter = sf::Vector2i(200, 50));
 		void update(float iTime) override {};
-		const std::vector<sf::Drawable*>& getDrawable() const override;
+		void drawObj(GWindow& iWin) const override;
 		bool isActive = true;
 		int type;
 	private:
