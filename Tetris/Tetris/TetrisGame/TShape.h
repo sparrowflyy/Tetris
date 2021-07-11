@@ -3,20 +3,21 @@
 
 namespace Tetris {
 	static const int shapeParts = 4;
+	enum ShapeType
+	{
+		Line,
+		ZigZagLeft,
+		ZigZagRight,
+		Rect,
+		T
+	};
 	
 	class TShape : public GObj
 	{
-		enum ShapeType
-		{
-			Line,
-			ZigZagLeft,
-			ZigZagRight,
-			Rect,
-			T
-		};
 	public:
 		TShape(int iType, const sf::Vector2i& iCenter = sf::Vector2i(200, 0));
-		void update(float iTime) override;
+		void update(float iTime) override {};
+		const std::vector<sf::Drawable*>& getDrawable() const override;
 		bool isActive = true;
 		int type;
 	private:

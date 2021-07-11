@@ -35,6 +35,10 @@ Tetris::TShape::TShape(int iType, const sf::Vector2i& iCenter) : GObj(), type(iT
 	}
 	
 }
+const std::vector<sf::Drawable*>& Tetris::TShape::getDrawable() const {
+	return {m_rects[0].get(),m_rects[1].get(),m_rects[2].get(),m_rects[3].get() };
+}
+
 
 void Tetris::TShape::initLine(const sf::Vector2i& iCenter)
 {
@@ -46,6 +50,7 @@ void Tetris::TShape::initLine(const sf::Vector2i& iCenter)
 	m_rects[1]->setPosition(center.x + 75.0, center.y);
 	m_rects[2]->setPosition(center.x - 25.0, center.y);
 	m_rects[3]->setPosition(center.x - 75.0, center.y);
+
 }
 
 void Tetris::TShape::initRect(const sf::Vector2i& iCenter)

@@ -22,8 +22,8 @@ public:
 	}
 
 	void addEvent(const GEvent& iEvent) { m_events.push_back(iEvent); }
-	virtual const sf::Drawable& getDrawable() const { return sf::RectangleShape(); } ;
-	virtual void update(float time) {};
+	virtual const std::vector<sf::Drawable*>& getDrawable() const { return {}; }
+	virtual void update(float iTime) {}
 	virtual ~GObj() {
 		m_textures.clear();
 		m_sprites.clear();

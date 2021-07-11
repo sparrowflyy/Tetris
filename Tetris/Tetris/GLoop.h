@@ -5,10 +5,10 @@
 class GLoop final
 {
 public:
-	GLoop();
+	GLoop() {}
 	void loop();
 	~GLoop() = default;
 private:
-	GWindow gWin;
+	GWindow gWin {};
 	std::vector<std::shared_ptr<GObj>> m_obj;
 };

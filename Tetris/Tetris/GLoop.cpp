@@ -1,11 +1,11 @@
 #include "GLoop.h"
+#include "TetrisGame/TShape.h"
 
-GLoop::GLoop()
-{
-	
-}
 void GLoop::loop() {
 
+  Tetris::TShape line(Tetris::ShapeType::Line);
+	
+  m_obj.push_back(std::make_shared<GObj>(line));
   while (gWin.win->isOpen())
   {
     sf::Event event;

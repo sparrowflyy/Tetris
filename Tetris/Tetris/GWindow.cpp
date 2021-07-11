@@ -9,5 +9,10 @@ GWindow::GWindow(int iWidth, int iHeight, std::string& iTitle) {
 }
 
 void GWindow::draw(const GObj& iGameObj) const {
-	win->draw(iGameObj.getDrawable());
+	auto arr = iGameObj.getDrawable();
+	for (int i = 0; i < arr.size(); i++)
+	{
+		win->draw(*arr[i]);
+		
+	}
 }
