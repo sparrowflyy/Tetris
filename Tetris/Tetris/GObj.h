@@ -21,7 +21,7 @@ public:
 		m_sprites.back()->setTexture(*m_textures.back());
 	}
 
-	virtual const sf::Drawable* getDrawable(int idx) const { return nullptr; }
+	virtual const sf::Drawable* getDrawable(int idx) const;
 	void addEvent(const GEvent& iEvent) { m_events.push_back(iEvent); }
 	virtual void update(float iTime) {}
 	

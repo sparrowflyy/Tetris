@@ -1,10 +1,11 @@
 #pragma once
 #include "../GObj.h"
 
-namespace Tetris {
+namespace TetrisShapes {
 	static const int shapeParts = 4;
 	static const int rectSize = 30;
 	static const float outlineThick = 2;
+	static const int numTypes = 5;
 	static const std::vector<sf::Color> shapeColors {
 		sf::Color(153,0,153), //purple
 		sf::Color(204,255,51),	//yellow
@@ -24,20 +25,19 @@ namespace Tetris {
 	class TShape : public GObj
 	{
 	public:
-		TShape(int iType, const sf::Vector2i& iCenter = sf::Vector2i(200, 50));
-		void update(float iTime) override {};
-		bool isActive = true;
+		TShape(int iType, const sf::Vector2f& iCenter = sf::Vector2f(200.0, 50.0));
+		void update(float iTime) override;
 		int type;
 		const sf::Drawable* getDrawable(int idx) const override;
 	private:
 		const sf::Color& getRandColor();
 		void initRectangles();
-		void initLine(const sf::Vector2i& iCenter);
-		void initZigZagLeft(const sf::Vector2i& iCenter);
-		void initZigZagRight(const sf::Vector2i& iCenter);
-		void initRect(const sf::Vector2i& iCenter);
-		void initT(const sf::Vector2i& iCenter);
-		sf::Vector2i center;
+		void initLine(const sf::Vector2f& iCenter);
+		void initZigZagLeft(const sf::Vector2f& iCenter);
+		void initZigZagRight(const sf::Vector2f& iCenter);
+		void initRect(const sf::Vector2f& iCenter);
+		void initT(const sf::Vector2f& iCenter);
+		sf::Vector2f center;
 		std::vector<std::shared_ptr<sf::RectangleShape>> m_rects;
 	};
 

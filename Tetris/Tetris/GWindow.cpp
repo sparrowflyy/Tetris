@@ -8,9 +8,9 @@ GWindow::GWindow(int iWidth, int iHeight, std::string& iTitle) {
 	win = std::make_unique<sf::RenderWindow>(sf::VideoMode(iWidth, iHeight), iTitle.c_str());
 }
 
-void GWindow::draw(const GObj& iGameObj) const {
-	for (int i = 0; i < iGameObj.parts; i++)
+void GWindow::draw(const GObj* iGameObj) const {
+	for (int i = 0; i < iGameObj->parts; i++)
 	{
-		win->draw(*iGameObj.getDrawable(i));
+		win->draw(*iGameObj->getDrawable(i));
 	}
 }

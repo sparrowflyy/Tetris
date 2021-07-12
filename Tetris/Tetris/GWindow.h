@@ -10,7 +10,7 @@ class GWindow final
 public:
 	GWindow();
 	GWindow(int iWeight, int iHeight, std::string& iTitle);
-	void draw(const GObj& iGameObj) const;
+	void draw(const GObj* iGameObj) const;
 	
 	~GWindow() = default;
 	friend class GLoop;

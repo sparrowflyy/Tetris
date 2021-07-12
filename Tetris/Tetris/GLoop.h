@@ -1,14 +1,16 @@
 #pragma once
 #include "GWindow.h"
 
-
+#include "GGame.h"
 class GLoop final
 {
 public:
-	GLoop() {}
+	GLoop(GGame* iGame): game(std::move(iGame)){}
 	void loop();
 	~GLoop() = default;
+
 private:
 	GWindow gWin {};
-	std::vector<std::shared_ptr<GObj>> m_obj;
+	std::unique_ptr<GGame> game;
+	
 };
