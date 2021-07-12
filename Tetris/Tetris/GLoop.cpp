@@ -3,7 +3,7 @@
 
 void GLoop::loop() {
 
-  TShape line(Tetris::ShapeType::Line);
+  TShape line(Tetris::ShapeType::T);
   sf::Clock clock;
   m_obj.push_back(std::make_shared<TShape>(line));
   while (gWin.win->isOpen())
