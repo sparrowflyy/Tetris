@@ -4,13 +4,9 @@
 class GObj :public sf::Drawable
 {
 public:
-	//void draw(sf::RenderTarget& target, sf::RenderStates states) const override {};
-	/*void addEvent(const GEvent& iEvent) { m_events.push_back(iEvent); }
-	virtual void update(float iTime) {}*/
+	void draw(sf::RenderTarget& target, sf::RenderStates states) const override {};
 	void addEvent(const GEvent& iEvent) { m_events.push_back(iEvent); }
-	//virtual void addEvent(const GEvent& iEvent) = 0;
 	virtual void update(float iTime) = 0;
-	
 	virtual ~GObj() {
 		m_textures.clear();
 		m_sprites.clear();
