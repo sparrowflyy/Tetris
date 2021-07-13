@@ -5,41 +5,47 @@
 #include "GTetris.h"
 #include "../GUtils.h"
 
-TShape::TShape(int iType, const sf::Vector2f& iCenter) : type(iType) {
+TShape::TShape(const sf::Vector2f& iCenter) {
 	parts = 4;
-	switch (iType)
-	{
-	case TetrisShapes::ShapeType::Line:
-		{
-			initLine(iCenter);
-			break;
-		}
-	case TetrisShapes::ShapeType::Rect:
-		{
-			initRect(iCenter);
-			break;
-		}
-	case TetrisShapes::ShapeType::T:
-		{
-			initT(iCenter);
-			break;
-		}
-	case TetrisShapes::ShapeType::ZigZagLeft:
-		{
-			initZigZagLeft(iCenter);
-			break;
-		}
-	case TetrisShapes::ShapeType::ZigZagRight:
-		{
-			initZigZagRight(iCenter);
-			break;
-		}
-		default:
-		{
-			break;
-		}
-	}
-	
+	type = -1;
+	init();
+}
+
+TShape* TShape::create(int iType)
+{
+	//switch (iType)
+	//{
+	//case TetrisShapes::ShapeType::Line:
+	//	{
+	//		initLine(iCenter);
+	//		break;
+	//	}
+	//case TetrisShapes::ShapeType::Rect:
+	//	{
+	//		initRect(iCenter);
+	//		break;
+	//	}
+	//case TetrisShapes::ShapeType::T:
+	//	{
+	//		initT(iCenter);
+	//		break;
+	//	}
+	//case TetrisShapes::ShapeType::ZigZagLeft:
+	//	{
+	//		initZigZagLeft(iCenter);
+	//		break;
+	//	}
+	//case TetrisShapes::ShapeType::ZigZagRight:
+	//	{
+	//		initZigZagRight(iCenter);
+	//		break;
+	//	}
+	//	default:
+	//	{
+	//		break;
+	//	}
+	//}
+	return nullptr;
 }
 
 
@@ -60,10 +66,18 @@ void TShape::update(float iTime)
 	}
 	m_events.clear();
 }
+
 void TShape::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	for (int i = 0; i < TetrisShapes::shapeParts; i ++) {
 		target.draw(m_rects[i]);
+	}
+	if (debug)
+	{
+		sf::CircleShape centerShape(10);
+		centerShape.setPosition(center);
+		centerShape.setFillColor(sf::Color::Red);
+		target.draw(centerShape);
 	}
 }
 
@@ -73,7 +87,7 @@ const sf::Color& TShape::getRandColor()
 }
 
 
-void TShape::initRectangles() {
+void TShape::init() {
 	const sf::Color& shapeColor = getRandColor();
 	for (int i = 0; i < TetrisShapes::shapeParts; i++) {
 		m_rects.push_back(sf::RectangleShape(sf::Vector2f(TetrisShapes::rectSize, TetrisShapes::rectSize)));
@@ -83,54 +97,70 @@ void TShape::initRectangles() {
 	}
 }
 
-void TShape::initLine(const sf::Vector2f& iCenter)
-{
-	center = iCenter;
-	initRectangles();
-	m_rects[0].setPosition(center.x - 3 * TetrisShapes::rectSize / 2, center.y);
-	for (int i = 1; i < 4; i++) {
-		m_rects[i].setPosition(m_rects[i-1].getPosition().x - TetrisShapes::outlineThick  + TetrisShapes::rectSize, center.y);
-	}
-	
-
+TShapeT::TShapeT(const sf::Vector2f& iCenter ) : TShape(iCenter) {
+	init();
 }
-
-void TShape::initRect(const sf::Vector2f& iCenter)
-{
-	center = iCenter;
-	initRectangles();
-	m_rects[0].setPosition(center.x - TetrisShapes::rectSize / 2, center.y);
-	m_rects[1].setPosition(m_rects[0].getPosition().x - TetrisShapes::outlineThick + TetrisShapes::rectSize, center.y);
-	m_rects[2].setPosition(center.x - TetrisShapes::rectSize / 2 , center.y - TetrisShapes::outlineThick + TetrisShapes::rectSize);
-	m_rects[3].setPosition(m_rects[2].getPosition().x - TetrisShapes::outlineThick + TetrisShapes::rectSize, center.y - TetrisShapes::outlineThick + TetrisShapes::rectSize);
-}
-
-void TShape::initT(const sf::Vector2f& iCenter)
-{
-	center = iCenter;
-	initRectangles();
+void TShapeT::init() {
 	m_rects[0].setPosition(center.x , center.y);
 	m_rects[1].setPosition(center.x , center.y - TetrisShapes::outlineThick + TetrisShapes::rectSize);
 	m_rects[2].setPosition(center.x - TetrisShapes::rectSize + TetrisShapes::outlineThick, center.y - TetrisShapes::outlineThick + TetrisShapes::rectSize);
 	m_rects[3].setPosition(center.x + TetrisShapes::rectSize - TetrisShapes::outlineThick, center.y - TetrisShapes::outlineThick + TetrisShapes::rectSize);
 }
 
-void TShape::initZigZagLeft(const sf::Vector2f& iCenter)
+void TShapeT::rotateLeft()
 {
-	center = iCenter;
-	initRectangles();
-	m_rects[0].setPosition(center.x - TetrisShapes::rectSize / 2, center.y);
-	m_rects[1].setPosition(m_rects[0].getPosition().x - TetrisShapes::outlineThick + TetrisShapes::rectSize, center.y);
-	m_rects[2].setPosition(center.x + TetrisShapes::rectSize / 2 - TetrisShapes::outlineThick, center.y - TetrisShapes::outlineThick + TetrisShapes::rectSize);
-	m_rects[3].setPosition(m_rects[2].getPosition().x - TetrisShapes::outlineThick + TetrisShapes::rectSize, center.y - TetrisShapes::outlineThick + TetrisShapes::rectSize);
+	
 }
-void TShape::initZigZagRight(const sf::Vector2f& iCenter)
-{
-	center = iCenter;
-	initRectangles();
-	m_rects[0].setPosition(center.x + TetrisShapes::rectSize / 2, center.y);
-	m_rects[1].setPosition(m_rects[0].getPosition().x - TetrisShapes::outlineThick + TetrisShapes::rectSize, center.y);
-	m_rects[2].setPosition(center.x + TetrisShapes::rectSize/2 , center.y - TetrisShapes::outlineThick + TetrisShapes::rectSize);
-	m_rects[3].setPosition(m_rects[2].getPosition().x + TetrisShapes::outlineThick - TetrisShapes::rectSize, center.y - TetrisShapes::outlineThick + TetrisShapes::rectSize);
 
-}
+
+//void TShape::initLine(const sf::Vector2f& iCenter)
+//{
+//	initRectangles();
+//	center = iCenter;
+//	m_rects[0].setPosition(center.x - 3 * TetrisShapes::rectSize / 2, center.y);
+//	for (int i = 1; i < 4; i++) {
+//		m_rects[i].setPosition(m_rects[i-1].getPosition().x - TetrisShapes::outlineThick  + TetrisShapes::rectSize, center.y);
+//	}
+//	
+//
+//}
+//
+//void TShape::initRect(const sf::Vector2f& iCenter)
+//{
+//	center = iCenter;
+//	initRectangles();
+//	m_rects[0].setPosition(center.x - TetrisShapes::rectSize / 2, center.y);
+//	m_rects[1].setPosition(m_rects[0].getPosition().x - TetrisShapes::outlineThick + TetrisShapes::rectSize, center.y);
+//	m_rects[2].setPosition(center.x - TetrisShapes::rectSize / 2 , center.y - TetrisShapes::outlineThick + TetrisShapes::rectSize);
+//	m_rects[3].setPosition(m_rects[2].getPosition().x - TetrisShapes::outlineThick + TetrisShapes::rectSize, center.y - TetrisShapes::outlineThick + TetrisShapes::rectSize);
+//}
+//
+//void TShape::initT(const sf::Vector2f& iCenter)
+//{
+//	center = iCenter;
+//	initRectangles();
+//	m_rects[0].setPosition(center.x , center.y);
+//	m_rects[1].setPosition(center.x , center.y - TetrisShapes::outlineThick + TetrisShapes::rectSize);
+//	m_rects[2].setPosition(center.x - TetrisShapes::rectSize + TetrisShapes::outlineThick, center.y - TetrisShapes::outlineThick + TetrisShapes::rectSize);
+//	m_rects[3].setPosition(center.x + TetrisShapes::rectSize - TetrisShapes::outlineThick, center.y - TetrisShapes::outlineThick + TetrisShapes::rectSize);
+//}
+//
+//void TShape::initZigZagLeft(const sf::Vector2f& iCenter)
+//{
+//	center = iCenter;
+//	initRectangles();
+//	m_rects[0].setPosition(center.x - TetrisShapes::rectSize / 2, center.y);
+//	m_rects[1].setPosition(m_rects[0].getPosition().x - TetrisShapes::outlineThick + TetrisShapes::rectSize, center.y);
+//	m_rects[2].setPosition(center.x + TetrisShapes::rectSize / 2 - TetrisShapes::outlineThick, center.y - TetrisShapes::outlineThick + TetrisShapes::rectSize);
+//	m_rects[3].setPosition(m_rects[2].getPosition().x - TetrisShapes::outlineThick + TetrisShapes::rectSize, center.y - TetrisShapes::outlineThick + TetrisShapes::rectSize);
+//}
+//void TShape::initZigZagRight(const sf::Vector2f& iCenter)
+//{
+//	center = iCenter;
+//	initRectangles();
+//	m_rects[0].setPosition(center.x + TetrisShapes::rectSize / 2, center.y);
+//	m_rects[1].setPosition(m_rects[0].getPosition().x - TetrisShapes::outlineThick + TetrisShapes::rectSize, center.y);
+//	m_rects[2].setPosition(center.x + TetrisShapes::rectSize/2 , center.y - TetrisShapes::outlineThick + TetrisShapes::rectSize);
+//	m_rects[3].setPosition(m_rects[2].getPosition().x + TetrisShapes::outlineThick - TetrisShapes::rectSize, center.y - TetrisShapes::outlineThick + TetrisShapes::rectSize);
+//
+//}

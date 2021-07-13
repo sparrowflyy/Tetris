@@ -3,6 +3,7 @@
 #include "./TetrisGame/GTetris.h"
 int WinMain()
 {
+	
   GTetris* game = new GTetris();
   GLoop gLoop(game);
   gLoop.loop();

@@ -4,7 +4,6 @@
 void GLoop::loop() {
   sf::RenderWindow window(sf::VideoMode(500, 600), "Tetris");
   game->init();
-  float gameSpeed = 1e-2;
   sf::Clock clock;
   while (window.isOpen())
   {
@@ -19,7 +18,7 @@ void GLoop::loop() {
     window.clear();
   
       
-    if (dt.asSeconds() >= gameSpeed) {
+    if (dt.asSeconds() >= game->frameTime) {
       game->processKeys();
       game->processEvents(dt.asSeconds());
      

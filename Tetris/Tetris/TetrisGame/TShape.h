@@ -1,6 +1,8 @@
 #pragma once
 #include "../GObj.h"
 
+static bool debug = true;
+
 namespace TetrisShapes {
 	static const int shapeParts = 4;
 	static const int rectSize = 30;
@@ -15,6 +17,7 @@ namespace TetrisShapes {
 	};
 	enum ShapeType
 	{
+		Null,
 		Line,
 		ZigZagLeft,
 		ZigZagRight,
@@ -25,22 +28,35 @@ namespace TetrisShapes {
 	class TShape : public GObj
 	{
 	public:
-		TShape(int iType, const sf::Vector2f& iCenter = sf::Vector2f(200.0, 50.0));
+		TShape(const sf::Vector2f& iCenter = sf::Vector2f(200.0, 50.0));
 		void update(float iTime) override;
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 		int type;
-
-	private:
+		static TShape* create(int iType);
 		const sf::Color& getRandColor();
-		void initRectangles();
-		void initLine(const sf::Vector2f& iCenter);
+		virtual void init();
+		virtual void rotateLeft() {}
+		virtual void rotateRight() {}
+		/*void initLine(const sf::Vector2f& iCenter);
 		void initZigZagLeft(const sf::Vector2f& iCenter);
 		void initZigZagRight(const sf::Vector2f& iCenter);
 		void initRect(const sf::Vector2f& iCenter);
-		void initT(const sf::Vector2f& iCenter);
+		void initT(const sf::Vector2f& iCenter);*/
 		sf::Vector2f center;
 		std::vector<sf::RectangleShape> m_rects;
 	};
+
+class TShapeT: public TShape
+{
+public:
+	TShapeT(const sf::Vector2f& iCenter = sf::Vector2f(200.0, 50.0));
+	void init() override;
+	void rotateLeft() override;
+	void rotateRight() override;
+	
+};
+
+
 
 	class TBackGround : public GObj
 	{

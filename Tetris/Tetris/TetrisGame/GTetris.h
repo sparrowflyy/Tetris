@@ -2,6 +2,8 @@
 #include "../GGame.h"
 #include "TShape.h"
 
+
+
 namespace Tetris
 {
 	static const sf::Vector2f left(-1, 0);
@@ -12,7 +14,7 @@ namespace Tetris
 class GTetris : public GGame
 {
 public:
-	GTetris() {}
+	GTetris() { frameTime = 1e-2; };
 	void init() override;
 	void processKeys() override;
 	void processEvents(float iTime) override;

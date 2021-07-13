@@ -5,7 +5,6 @@
 class GGame
 {
 public:
-	GGame() {}
 	typedef std::vector<GObj*> GData;
 	virtual void init() = 0;
 	virtual void processKeys() = 0;
@@ -13,6 +12,6 @@ public:
 	virtual void postProcess() = 0;
 	friend class GLoop;
 	virtual ~GGame() { m_obj.clear(); }
-protected:
+	float frameTime;
 	GData m_obj;
 };

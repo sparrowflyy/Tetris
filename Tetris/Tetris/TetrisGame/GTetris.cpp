@@ -3,9 +3,8 @@
 #include "../GUtils.h"
 
 void GTetris::genRandTShape() {
-	//std::shared_ptr<TShape> rndShape = std::make_shared<TShape>(TShape(GUtils::genRandomInt(0, TetrisShapes::numTypes - 1)));
-	TShape* rndShape = new TShape(GUtils::genRandomInt(0, TetrisShapes::numTypes - 1));
-	m_obj.push_back(rndShape);
+	/*TShape* rndShape = new TShape(GUtils::genRandomInt(0, TetrisShapes::numTypes - 1));
+	m_obj.push_back(rndShape);*/
 }
 
 void GTetris::init() {
