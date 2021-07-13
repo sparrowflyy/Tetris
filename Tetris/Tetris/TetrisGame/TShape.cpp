@@ -1,9 +1,11 @@
 #include "TShape.h"
 
 #include <random>
+
+#include "GTetris.h"
 #include "../GUtils.h"
 
-TShape::TShape(int iType, const sf::Vector2f& iCenter) : /*GObj(),*/ type(iType) {
+TShape::TShape(int iType, const sf::Vector2f& iCenter) : type(iType) {
 	parts = 4;
 	switch (iType)
 	{
@@ -43,24 +45,24 @@ TShape::TShape(int iType, const sf::Vector2f& iCenter) : /*GObj(),*/ type(iType)
 
 void TShape::update(float iTime)
 {
+	m_events.push_back(new GEventMotion(Tetris::down * float(TetrisShapes::rectSize)));
 	for (int i = 0; i < m_events.size(); i++) {
-		if (m_events[i].type == GEvent::EventType::Motion) {
-			GEventMotion* event = (GEventMotion*)(&m_events[i]);
-			const sf::Vector2f& motion = event->getMotion();
-			for (int rectIdx = 0; rectIdx < TetrisShapes::shapeParts; rectIdx++)
-			{
+		if (m_events[i]->type == GEvent::EventType::Motion) {
+			GEventMotion* event = (GEventMotion*)(m_events[i]);
+			const sf::Vector2f& motion = event->getMotion() * iTime;
+			for (int rectIdx = 0; rectIdx < TetrisShapes::shapeParts; rectIdx++) {
 				m_rects[rectIdx].move(motion);
 			}
 			center.x += motion.x;
 			center.y += motion.y;
+			//delete m_events[i];
 		}
-		
 	}
+	m_events.clear();
 }
 void TShape::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	for (int i = 0; i < TetrisShapes::shapeParts; i ++)
-	{
+	for (int i = 0; i < TetrisShapes::shapeParts; i ++) {
 		target.draw(m_rects[i]);
 	}
 }

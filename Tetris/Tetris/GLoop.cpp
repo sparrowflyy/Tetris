@@ -4,6 +4,8 @@
 void GLoop::loop() {
   sf::RenderWindow window(sf::VideoMode(500, 600), "Tetris");
   game->init();
+  float gameSpeed = 1e-2;
+  sf::Clock clock;
   while (window.isOpen())
   {
     sf::Event event;
@@ -13,9 +15,17 @@ void GLoop::loop() {
         window.close();
     }
 
+    sf::Time dt = clock.getElapsedTime();
     window.clear();
-    game->processKeys();
-		game->processEvents(1);
+  
+      
+    if (dt.asSeconds() >= gameSpeed) {
+      game->processKeys();
+      game->processEvents(dt.asSeconds());
+     
+		  clock.restart();
+    	
+    }
     for (int i = 0; i < game->m_obj.size(); i++) {
       game->m_obj[i]->draw(window, sf::RenderStates::Default);
     }

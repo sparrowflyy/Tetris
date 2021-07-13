@@ -5,7 +5,7 @@ class GObj :public sf::Drawable
 {
 public:
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override {};
-	void addEvent(const GEvent& iEvent) { m_events.push_back(iEvent); }
+	void addEvent(const GEvent* iEvent) { m_events.push_back(iEvent); }
 	virtual void update(float iTime) = 0;
 	virtual ~GObj() {
 		m_textures.clear();
@@ -18,6 +18,6 @@ public:
 	int parts;
 	std::vector<std::shared_ptr<sf::Texture>> m_textures {};
 	std::vector<std::shared_ptr<sf::Sprite>> m_sprites {};
-	std::vector<GEvent> m_events {};
+	std::vector<const GEvent*> m_events;
 	
 };

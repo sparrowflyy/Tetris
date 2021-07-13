@@ -4,7 +4,10 @@
 
 namespace Tetris
 {
-
+	static const sf::Vector2f left(-1, 0);
+	static const sf::Vector2f right(1, 0);
+	static const sf::Vector2f down(0, 1);
+	
 }
 class GTetris : public GGame
 {

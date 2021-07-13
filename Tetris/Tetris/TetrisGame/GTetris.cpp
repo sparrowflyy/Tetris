@@ -14,14 +14,11 @@ void GTetris::init() {
 }
 
 void GTetris::processKeys() {
-	//m_obj[idxActive]->addEvent(GEventMotion(sf::Vector2f(0, TetrisShapes::rectSize)));
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-		GEventMotion ev(sf::Vector2f(-TetrisShapes::rectSize, 0));
-		m_obj[idxActive]->addEvent(ev);
+		m_obj[idxActive]->addEvent(new GEventMotion(Tetris::left * float(TetrisShapes::rectSize)));
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-		GEventMotion ev(sf::Vector2f(TetrisShapes::rectSize, 0));
-		m_obj[idxActive]->addEvent(ev);
+		m_obj[idxActive]->addEvent(new GEventMotion(Tetris::right * float(TetrisShapes::rectSize)));
 	}
 	
 }
