@@ -16,6 +16,6 @@ public:
 	void postProcess() override;
 	~GTetris() {}
 private:
-	std::shared_ptr<GObj> activeShape;
+	int idxActive = 0;
 	void genRandTShape();
 };

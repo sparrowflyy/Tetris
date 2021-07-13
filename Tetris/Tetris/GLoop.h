@@ -10,7 +10,7 @@ public:
 	~GLoop() = default;
 
 private:
-	GWindow gWin {};
+	//GWindow gWin {};
 	std::unique_ptr<GGame> game;
 	
 };

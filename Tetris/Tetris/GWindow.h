@@ -8,10 +8,10 @@
 class GWindow final 
 {
 public:
-	GWindow();
-	GWindow(int iWeight, int iHeight, std::string& iTitle);
+	GWindow(): win(new sf::RenderWindow(sf::VideoMode(500, 650), "Tetris")) {}
+	GWindow(int iWeight, int iHeight, std::string& iTitle):
+		win(new sf::RenderWindow(sf::VideoMode(iWeight, iHeight),iTitle.c_str())) {}
 	void draw(const GObj* iGameObj) const;
-	
 	~GWindow() = default;
 	friend class GLoop;
 private:

@@ -1,33 +1,20 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "GEvent.h"
-class GObj
+class GObj :public sf::Drawable
 {
 public:
-	GObj(int iParts = 1) : parts(iParts) {}
-	GObj(const std::string& iPath) : parts(1) {
-		addTexture(iPath);
-	}
-	GObj(const std::vector<std::string>& iPaths) : parts(1) {
-		for (auto path : iPaths) {
-			addTexture(path);
-		}
-	};
-	void addTexture(const std::string& iPath)
-	{
-		m_textures.push_back(std::make_shared<sf::Texture>(sf::Texture()));
-		m_textures.back()->loadFromFile(iPath.c_str());
-		m_sprites.push_back(std::make_shared<sf::Sprite>(sf::Sprite()));
-		m_sprites.back()->setTexture(*m_textures.back());
-	}
-
-	virtual const sf::Drawable* getDrawable(int idx) const;
+	//void draw(sf::RenderTarget& target, sf::RenderStates states) const override {};
+	/*void addEvent(const GEvent& iEvent) { m_events.push_back(iEvent); }
+	virtual void update(float iTime) {}*/
 	void addEvent(const GEvent& iEvent) { m_events.push_back(iEvent); }
-	virtual void update(float iTime) {}
+	//virtual void addEvent(const GEvent& iEvent) = 0;
+	virtual void update(float iTime) = 0;
 	
 	virtual ~GObj() {
 		m_textures.clear();
 		m_sprites.clear();
+		m_events.clear();
 	};
 
 	//index of sprite to draw

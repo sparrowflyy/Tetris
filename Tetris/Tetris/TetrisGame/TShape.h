@@ -27,8 +27,9 @@ namespace TetrisShapes {
 	public:
 		TShape(int iType, const sf::Vector2f& iCenter = sf::Vector2f(200.0, 50.0));
 		void update(float iTime) override;
+		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 		int type;
-		const sf::Drawable* getDrawable(int idx) const override;
+
 	private:
 		const sf::Color& getRandColor();
 		void initRectangles();
@@ -38,7 +39,7 @@ namespace TetrisShapes {
 		void initRect(const sf::Vector2f& iCenter);
 		void initT(const sf::Vector2f& iCenter);
 		sf::Vector2f center;
-		std::vector<std::shared_ptr<sf::RectangleShape>> m_rects;
+		std::vector<sf::RectangleShape> m_rects;
 	};
 
 	class TBackGround : public GObj

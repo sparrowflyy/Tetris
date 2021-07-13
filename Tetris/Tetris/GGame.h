@@ -6,7 +6,7 @@ class GGame
 {
 public:
 	GGame() {}
-	typedef std::vector<std::shared_ptr<GObj>> GData;
+	typedef std::vector<GObj*> GData;
 	virtual void init() = 0;
 	virtual void processKeys() = 0;
 	virtual void processEvents(float iTime) = 0;

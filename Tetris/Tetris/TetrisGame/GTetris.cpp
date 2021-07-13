@@ -3,23 +3,25 @@
 #include "../GUtils.h"
 
 void GTetris::genRandTShape() {
-	m_obj.push_back(std::make_shared<GObj>(TShape(GUtils::genRandomInt(0, TetrisShapes::numTypes-1))));
+	//std::shared_ptr<TShape> rndShape = std::make_shared<TShape>(TShape(GUtils::genRandomInt(0, TetrisShapes::numTypes - 1)));
+	TShape* rndShape = new TShape(GUtils::genRandomInt(0, TetrisShapes::numTypes - 1));
+	m_obj.push_back(rndShape);
 }
 
 void GTetris::init() {
 	genRandTShape();
-	activeShape = m_obj[0];
+	idxActive = 0;
 }
 
 void GTetris::processKeys() {
-	activeShape->addEvent(GEventMotion(sf::Vector2f(0, TetrisShapes::rectSize)));
+	//m_obj[idxActive]->addEvent(GEventMotion(sf::Vector2f(0, TetrisShapes::rectSize)));
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 		GEventMotion ev(sf::Vector2f(-TetrisShapes::rectSize, 0));
-		activeShape->addEvent(ev);
+		m_obj[idxActive]->addEvent(ev);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
 		GEventMotion ev(sf::Vector2f(TetrisShapes::rectSize, 0));
-		activeShape->addEvent(ev);
+		m_obj[idxActive]->addEvent(ev);
 	}
 	
 }
