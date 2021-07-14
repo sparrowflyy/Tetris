@@ -3,8 +3,9 @@
 #include "../GUtils.h"
 
 void GTetris::genRandTShape() {
-	/*TShape* rndShape = new TShape(GUtils::genRandomInt(0, TetrisShapes::numTypes - 1));
-	m_obj.push_back(rndShape);*/
+	//TShape* rndShape = new TShape(GUtils::genRandomInt(0, TetrisShapes::numTypes - 1));
+	TShapeT* rndShape = new TShapeT();
+	m_obj.push_back(rndShape);
 }
 
 void GTetris::init() {
@@ -18,6 +19,12 @@ void GTetris::processKeys() {
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
 		m_obj[idxActive]->addEvent(new GEventMotion(Tetris::right * float(TetrisShapes::rectSize)));
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
+		m_obj[idxActive]->addEvent(new GEventMotion({0,0},90));
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::X)) {
+		m_obj[idxActive]->addEvent(new GEventMotion({ 0,0 }, -90));
 	}
 	
 }

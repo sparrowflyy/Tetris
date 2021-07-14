@@ -35,8 +35,9 @@ namespace TetrisShapes {
 		static TShape* create(int iType);
 		const sf::Color& getRandColor();
 		virtual void init();
-		virtual void rotateLeft() {}
-		virtual void rotateRight() {}
+		virtual void rotate(float iAngle) {};
+		//virtual void rotateLeft() {}
+		//virtual void rotateRight() {}
 		/*void initLine(const sf::Vector2f& iCenter);
 		void initZigZagLeft(const sf::Vector2f& iCenter);
 		void initZigZagRight(const sf::Vector2f& iCenter);
@@ -51,8 +52,9 @@ class TShapeT: public TShape
 public:
 	TShapeT(const sf::Vector2f& iCenter = sf::Vector2f(200.0, 50.0));
 	void init() override;
-	void rotateLeft() override;
-	void rotateRight() override;
+	void rotate(float iAngle) override;
+	//void rotateLeft() override;
+	//void rotateRight() override;
 	
 };
 
