@@ -59,8 +59,8 @@ void TShape::update(float iTime)
 			const sf::Vector2f& motion = event->getMotion() * iTime;
 			for (int rectIdx = 0; rectIdx < TetrisShapes::shapeParts; rectIdx++) {
 				m_rects[rectIdx].move(motion);
-				m_rects[rectIdx].rotate(event->getAngle());
 			}
+			rotate(event->getAngle());
 			center.x += motion.x;
 			center.y += motion.y;
 			//delete m_events[i];
@@ -73,11 +73,13 @@ void TShape::update(float iTime)
 void TShape::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	for (int i = 0; i < TetrisShapes::shapeParts; i ++) {
-		target.draw(m_rects[i]);
+		sf::RenderStates state;
+		state.transform = m_rectTransforms[i];
+		target.draw(m_rects[i],state);
 	}
 	if (debug)
 	{
-		sf::CircleShape centerShape(2);
+		sf::CircleShape centerShape(1);
 		centerShape.setPosition(center);
 		centerShape.setFillColor(sf::Color::Red);
 		target.draw(centerShape);
@@ -104,20 +106,23 @@ TShapeT::TShapeT(const sf::Vector2f& iCenter ) : TShape(iCenter) {
 	init();
 }
 void TShapeT::init() {
-	
-	m_rects[0].setPosition(center.x , center.y - TetrisShapes::rectSize/2);
-	m_rects[1].setPosition(center.x - TetrisShapes::rectSize, m_rects[0].getPosition().y - TetrisShapes::outlineThick + TetrisShapes::rectSize);
-	m_rects[2].setPosition(m_rects[1].getPosition().x + TetrisShapes::rectSize + TetrisShapes::outlineThick, m_rects[0].getPosition().y - TetrisShapes::outlineThick + TetrisShapes::rectSize);
-	m_rects[3].setPosition(m_rects[2].getPosition().x + TetrisShapes::rectSize + TetrisShapes::outlineThick, m_rects[0].getPosition().y - TetrisShapes::outlineThick + TetrisShapes::rectSize);
-	//m_rects[0].setPosition(center.x , center.y - TetrisShapes::rectSize/2);
 
+	m_rects[0].setPosition(center.x - TetrisShapes::rectSize / 2, center.y - TetrisShapes::rectSize + TetrisShapes::outlineThick);
+	m_rects[1].setPosition(m_rects[0].getPosition().x, m_rects[0].getPosition().y - TetrisShapes::outlineThick + TetrisShapes::rectSize);
+	m_rects[2].setPosition(m_rects[1].getPosition().x + TetrisShapes::rectSize - TetrisShapes::outlineThick, m_rects[0].getPosition().y - TetrisShapes::outlineThick + TetrisShapes::rectSize);
+	m_rects[3].setPosition(m_rects[1].getPosition().x - TetrisShapes::rectSize + TetrisShapes::outlineThick, m_rects[0].getPosition().y - TetrisShapes::outlineThick + TetrisShapes::rectSize);
+	for (int i = 0; i < m_rects.size(); i++)
+	{
+		m_rectTransforms.push_back(m_rects[i].getTransform());
+	}
 }
 
 void TShapeT::rotate(float iAngle)
 {
-	for (auto& rect:m_rects)
+
+	for (auto& rectTrans:m_rectTransforms)
 	{
-		rect.setRotation(iAngle);
+		rectTrans.rotate(iAngle, center);
 	}
 	
 }

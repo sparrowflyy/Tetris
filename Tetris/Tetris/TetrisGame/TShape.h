@@ -45,6 +45,7 @@ namespace TetrisShapes {
 		void initT(const sf::Vector2f& iCenter);*/
 		sf::Vector2f center;
 		std::vector<sf::RectangleShape> m_rects;
+		std::vector<sf::Transform> m_rectTransforms;
 	};
 
 class TShapeT: public TShape

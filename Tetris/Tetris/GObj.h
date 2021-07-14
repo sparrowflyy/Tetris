@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "GEvent.h"
-class GObj :public sf::Drawable
+class GObj :public sf::Drawable, public sf::Transformable
 {
 public:
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override {};
