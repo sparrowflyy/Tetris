@@ -28,7 +28,7 @@ namespace TetrisShapes {
 	class TShape : public GObj
 	{
 	public:
-		TShape(const sf::Vector2f& iCenter = sf::Vector2f(200.0, 50.0));
+		TShape(const sf::Vector2f& iCenter = sf::Vector2f(200.0, 200.0));
 		void update(float iTime) override;
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 		int type;
@@ -51,7 +51,7 @@ namespace TetrisShapes {
 class TShapeT: public TShape
 {
 public:
-	TShapeT(const sf::Vector2f& iCenter = sf::Vector2f(200.0, 50.0));
+	TShapeT(const sf::Vector2f& iCenter = sf::Vector2f(200.0, 200.0));
 	void init() override;
 	void rotate(float iAngle) override;
 	//void rotateLeft() override;
