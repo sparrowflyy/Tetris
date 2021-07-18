@@ -1,5 +1,7 @@
 #pragma once
 #include <random>
+#include <SFML/System/Vector2.hpp>
+#include <SFML/System/Vector3.hpp>
 
 namespace GUtils
 {
@@ -9,5 +11,6 @@ namespace GUtils
 		std::uniform_int_distribution<> distrib(min, max);
 		return distrib(gen);
 	}
-	;
+
+	
 }
