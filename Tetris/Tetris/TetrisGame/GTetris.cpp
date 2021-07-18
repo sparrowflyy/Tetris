@@ -3,8 +3,7 @@
 #include "../GUtils.h"
 
 void GTetris::genRandTShape() {
-	//TShape* rndShape = new TShape(GUtils::genRandomInt(0, TetrisShapes::numTypes - 1));
-	TShape* rndShape = new TShape(TetrisShapes::ZigZagLeft);
+	TShape* rndShape = new TShape(GUtils::genRandomInt(0, TetrisShapes::numTypes - 1));
 	m_obj.push_back(rndShape);
 }
 

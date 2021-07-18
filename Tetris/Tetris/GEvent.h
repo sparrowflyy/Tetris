@@ -19,11 +19,9 @@ public:
 class GEventMotion: public GEvent
 {
 public:
-	GEventMotion(const sf::Vector2f& iMotion, float iRotAng = 0.0) : GEvent(EventType::Motion), motion(iMotion), angle(iRotAng) {}
+	GEventMotion(const sf::Vector2f& iMotion) : GEvent(EventType::Motion), motion(iMotion) {}
 	const sf::Vector2f& getMotion() const { return motion; }
-	float getAngle() const { return angle; }
   ~GEventMotion() {}
 private:
 	sf::Vector2f motion;
-	float angle;
 };
