@@ -1,5 +1,7 @@
 #include "TShape.h"
 
+
+#include <iostream>
 #include <random>
 
 #include "GTetris.h"
@@ -59,7 +61,11 @@ void TShape::rotate()
 
 void TShape::update(float iTime)
 {
-	m_events.push_back(new GEventMotion(Tetris::down * float(TetrisShapes::rectSize)));
+	elapsedTime += iTime;
+	if (elapsedTime > fallTime) {
+		addEvent(new GEventMotion(Tetris::down * float(TetrisShapes::rectSize)/iTime));
+		elapsedTime = 0.0;
+	}
 	for (int i = 0; i < m_events.size(); i++) {
 		if (m_events[i]->type == GEvent::EventType::Motion) {
 			GEventMotion* event = (GEventMotion*)(m_events[i]);
@@ -70,7 +76,9 @@ void TShape::update(float iTime)
 			center.x += motion.x;
 			center.y += motion.y;
 		}
-		
+		if (m_events[i]->type == GEvent::EventType::Rotation && elapsedTime > rotationTime) {
+			rotate();
+		}
 	}
 	m_events.clear();
 }

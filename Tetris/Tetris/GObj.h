@@ -5,6 +5,7 @@ class GObj :public sf::Drawable, public sf::Transformable
 {
 public:
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override {};
+	void addUniqueEvent(const GEvent* iEvent);
 	void addEvent(const GEvent* iEvent) { m_events.push_back(iEvent); }
 	virtual void update(float iTime) = 0;
 	virtual ~GObj() {

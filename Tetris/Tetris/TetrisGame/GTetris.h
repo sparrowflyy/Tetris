@@ -2,7 +2,12 @@
 #include "../GGame.h"
 #include "TShape.h"
 
-
+class TRotationEvent: public GEvent
+{
+public:
+	TRotationEvent() : GEvent(GEvent::EventType::Rotation){}
+	~TRotationEvent() {};
+};
 
 namespace Tetris
 {
@@ -14,13 +19,21 @@ namespace Tetris
 class GTetris : public GGame
 {
 public:
-	GTetris() { frameTime = 0.1; };
+	GTetris() { frameTime = 1e-3; };
 	void init() override;
-	void processKeys() override;
+	void processKeys(const sf::Event& event) override;
 	void processEvents(float iTime) override;
 	void postProcess() override;
-	~GTetris() {}
+	~GTetris() { m_events.clear(); }
 private:
+	enum Events
+	{
+		MoveLeft,
+		MoveRight,
+		Rotate
+	};
+	GEvent* getEvent(int iEventType);
 	int idxActive = 0;
+	std::vector<GEvent*> m_events;
 	void genRandTShape();
 };

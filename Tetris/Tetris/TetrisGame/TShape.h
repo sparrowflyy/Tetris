@@ -8,6 +8,7 @@ namespace TetrisShapes {
 	static const int rectSize = 30;
 	static const float outlineThick = 2;
 	static const int numTypes = 5;
+	static const float shapeSpeed = 50;
 	static sf::Vector2f center{ 200,50 };
 	static const std::vector<sf::Color> shapeColors {
 		sf::Color(153,0,153), //purple
@@ -18,12 +19,11 @@ namespace TetrisShapes {
 	};
 	enum ShapeType
 	{
-		Null,
 		Line,
 		ZigZagLeft,
 		ZigZagRight,
 		Rect,
-		T
+		T,
 	};
 }
 	class TShape : public GObj
@@ -45,7 +45,9 @@ namespace TetrisShapes {
 	protected:
 		sf::Vector2f center;
 		std::vector<sf::RectangleShape> m_rects;
-
+		float elapsedTime = 0.0;
+		const float fallTime = 1;
+		const float rotationTime = 0.5;
 	};
 
 
