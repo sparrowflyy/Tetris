@@ -4,7 +4,7 @@
 
 void GTetris::genRandTShape() {
 	//TShape* rndShape = new TShape(GUtils::genRandomInt(0, TetrisShapes::numTypes - 1));
-	TShapeT* rndShape = new TShapeT();
+	TShape* rndShape = new TShape(TetrisShapes::ZigZagLeft);
 	m_obj.push_back(rndShape);
 }
 
