@@ -76,8 +76,12 @@ void TShape::update(float iTime)
 			center.x += motion.x;
 			center.y += motion.y;
 		}
-		if (m_events[i]->type == GEvent::EventType::Rotation && elapsedTime > rotationTime) {
+		if (m_events[i]->type == GEvent::EventType::RotationStart && !rotated) {
+			rotated = true;
 			rotate();
+		}
+		if (m_events[i]->type == GEvent::EventType::RotationEnd && rotated) {
+			rotated = false;
 		}
 	}
 	m_events.clear();

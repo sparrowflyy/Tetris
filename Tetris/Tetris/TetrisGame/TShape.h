@@ -8,7 +8,7 @@ namespace TetrisShapes {
 	static const int rectSize = 30;
 	static const float outlineThick = 2;
 	static const int numTypes = 5;
-	static const float shapeSpeed = 50;
+	static const float shapeSpeed = 100;
 	static sf::Vector2f center{ 200,50 };
 	static const std::vector<sf::Color> shapeColors {
 		sf::Color(153,0,153), //purple
@@ -46,8 +46,8 @@ namespace TetrisShapes {
 		sf::Vector2f center;
 		std::vector<sf::RectangleShape> m_rects;
 		float elapsedTime = 0.0;
-		const float fallTime = 1;
-		const float rotationTime = 0.5;
+		const float fallTime = 0.5;
+		bool rotated = false;
 	};
 
 

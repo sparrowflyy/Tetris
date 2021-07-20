@@ -2,11 +2,17 @@
 #include "../GGame.h"
 #include "TShape.h"
 
-class TRotationEvent: public GEvent
+class TRotationEventStart: public GEvent
 {
 public:
-	TRotationEvent() : GEvent(GEvent::EventType::Rotation){}
-	~TRotationEvent() {};
+	TRotationEventStart() : GEvent(GEvent::EventType::RotationStart){}
+	~TRotationEventStart() {};
+};
+class TRotationEventEnd : public GEvent
+{
+public:
+	TRotationEventEnd() : GEvent(GEvent::EventType::RotationEnd) {}
+	~TRotationEventEnd() {};
 };
 
 namespace Tetris
@@ -19,7 +25,7 @@ namespace Tetris
 class GTetris : public GGame
 {
 public:
-	GTetris() { frameTime = 1e-3; };
+	GTetris() { frameTime = 1e-6;};
 	void init() override;
 	void processKeys(const sf::Event& event) override;
 	void processEvents(float iTime) override;
@@ -30,7 +36,8 @@ private:
 	{
 		MoveLeft,
 		MoveRight,
-		Rotate
+		RotateStart,
+		RotateEnd
 	};
 	GEvent* getEvent(int iEventType);
 	int idxActive = 0;

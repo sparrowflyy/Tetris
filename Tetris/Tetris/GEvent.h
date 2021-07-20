@@ -9,7 +9,8 @@ public:
 		Motion,
 		Intersection,
 		Force,
-		Rotation
+		RotationStart,
+		RotationEnd
 	};
 	GEvent(int iType = EventType::NullEvent) : type(iType) {}
 	
