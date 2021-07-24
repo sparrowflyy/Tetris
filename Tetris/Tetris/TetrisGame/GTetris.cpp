@@ -6,6 +6,7 @@
 
 void GTetris::genRandTShape() {
 	TShape* rndShape = new TShape(GUtils::genRandomInt(0, TetrisShapes::numTypes - 1));
+	//TShape* rndShape = new TShape(TetrisShapes::J);
 	m_obj.push_back(rndShape);
 }
 
@@ -30,15 +31,16 @@ void GTetris::processKeys(const sf::Event& event) {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
 		m_obj[idxActive]->addEvent(getEvent(Events::MoveRight));
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-		m_obj[idxActive]->addEvent(getEvent(Events::RotateStart));
-	}
 	if (event.type == sf::Event::KeyReleased) {
 		if (event.key.code == sf::Keyboard::W) {
 			m_obj[idxActive]->addEvent(getEvent(Events::RotateEnd));
 		}
-		
+
 	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+		m_obj[idxActive]->addEvent(getEvent(Events::RotateStart));
+	}
+
 }
 
 void GTetris::processEvents(float iTime) {

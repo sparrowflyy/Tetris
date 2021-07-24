@@ -25,7 +25,7 @@ namespace Tetris
 class GTetris : public GGame
 {
 public:
-	GTetris() { frameTime = 1e-6;};
+	GTetris() { frameTime = 1e-10;};
 	void init() override;
 	void processKeys(const sf::Event& event) override;
 	void processEvents(float iTime) override;

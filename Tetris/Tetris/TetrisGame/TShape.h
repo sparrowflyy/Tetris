@@ -7,9 +7,9 @@ namespace TetrisShapes {
 	static const int shapeParts = 4;
 	static const int rectSize = 30;
 	static const float outlineThick = 2;
-	static const int numTypes = 5;
+	static const int numTypes = 7;
 	static const float shapeSpeed = 100;
-	static sf::Vector2f center{ 200,50 };
+	static sf::Vector2f center{ 200,100 };
 	static const std::vector<sf::Color> shapeColors {
 		sf::Color(153,0,153), //purple
 		sf::Color(204,255,51),	//yellow
@@ -19,11 +19,13 @@ namespace TetrisShapes {
 	};
 	enum ShapeType
 	{
-		Line,
-		ZigZagLeft,
-		ZigZagRight,
-		Rect,
+		I,
+		Z,
+		S,
+		O,
 		T,
+		J,
+		L
 	};
 }
 	class TShape : public GObj
@@ -36,11 +38,13 @@ namespace TetrisShapes {
 		const sf::Color& getRandColor();
 		void init();
 	  void rotate();
-		void initLine(const sf::Vector2f& iCenter);
-		void initZigZagLeft(const sf::Vector2f& iCenter);
-		void initZigZagRight(const sf::Vector2f& iCenter);
-		void initRect(const sf::Vector2f& iCenter);
-		void initT(const sf::Vector2f& iCenter);
+		void initI();
+		void initZ();
+		void initS();
+		void initO();
+		void initT();
+		void initJ();
+		void initL();
 
 	protected:
 		sf::Vector2f center;
