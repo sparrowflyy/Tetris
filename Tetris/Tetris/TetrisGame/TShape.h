@@ -34,10 +34,10 @@ namespace TetrisShapes {
 		TShape(int iType, const sf::Vector2f& iCenter = TetrisShapes::center);
 		void update(float iTime) override;
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-		int type;
+		sf::FloatRect getExtents() const override;
 		const sf::Color& getRandColor();
+		void rotate(bool clockWise = true);
 		void init();
-	  void rotate();
 		void initI();
 		void initZ();
 		void initS();
@@ -45,7 +45,8 @@ namespace TetrisShapes {
 		void initT();
 		void initJ();
 		void initL();
-
+	
+		int type;
 	protected:
 		sf::Vector2f center;
 		std::vector<sf::RectangleShape> m_rects;

@@ -7,6 +7,7 @@
 #include "GTetris.h"
 #include "../GUtils.h"
 using namespace TetrisShapes;
+
 TShape::TShape(int iType, const sf::Vector2f& iCenter) {
 	parts = 4;
 	type = iType;
@@ -55,16 +56,17 @@ TShape::TShape(int iType, const sf::Vector2f& iCenter) {
 			}
 		}
 }
-void TShape::rotate()
+void TShape::rotate(bool clockWise)
 {
 	if (type == ShapeType::O)
 		return;
+	int dir = clockWise ? 1 : -1;
 	for (int i = 0; i < shapeParts; i++) {
 		sf::Vector2f pos = m_rects[i].getPosition();
 		float x = pos.x + rectSize / 2 - center.x;
 		float y = pos.y + rectSize / 2 - center.y;
-		pos.x = center.x - y - rectSize / 2;
-		pos.y = center.y + x - rectSize / 2;
+		pos.x = center.x - y*dir - rectSize / 2;
+		pos.y = center.y + x*dir - rectSize / 2;
 		m_rects[i].setPosition(pos);
 	}
 	
@@ -116,7 +118,23 @@ void TShape::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 const sf::Color& TShape::getRandColor()
 {
-	return TetrisShapes::shapeColors[GUtils::genRandomInt(0, TetrisShapes::shapeColors.size() - 1)];
+	return TetrisShapes::shapeColors[GUtils::genRandomInt(0, shapeColors.size() - 1)];
+}
+
+sf::FloatRect TShape::getExtents() const {
+	float xMax = 0.0, xMin = 1e10, yMax = 0.0, yMin = 1e10;
+	for (auto& rect: m_rects) {
+		sf::FloatRect curRect = rect.getGlobalBounds();
+		if (curRect.left < xMin)
+			xMin = curRect.left;
+		if (curRect.left + curRect.width > xMax)
+			xMax = curRect.left;
+		if (curRect.top < yMin)
+			yMin = curRect.top;
+		if (curRect.top + curRect.height > yMax)
+			yMax = curRect.top + curRect.height;
+	}
+	return sf::FloatRect(xMin,yMin,xMax-xMin, yMax - yMin);
 }
 
 

@@ -4,6 +4,13 @@
 
 #include "../GUtils.h"
 
+GTetris::GTetris(int iWinWidth, int iWinHeight, float iFrameTime):intersector(iWinWidth,iWinHeight) {
+	m_winWidth = iWinWidth;
+	m_winHeight = iWinHeight;
+	m_frameTime = iFrameTime;
+	
+}
+
 void GTetris::genRandTShape() {
 	TShape* rndShape = new TShape(GUtils::genRandomInt(0, TetrisShapes::numTypes - 1));
 	//TShape* rndShape = new TShape(TetrisShapes::J);
@@ -44,9 +51,11 @@ void GTetris::processKeys(const sf::Event& event) {
 }
 
 void GTetris::processEvents(float iTime) {
+	
 	for (auto obj: m_obj) {
 		obj->update(iTime);
 	}
+	
 }
 
 void GTetris::postProcess() {

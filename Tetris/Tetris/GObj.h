@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "GEvent.h"
+
 class GObj :public sf::Drawable, public sf::Transformable
 {
 public:
@@ -8,6 +9,7 @@ public:
 	void addUniqueEvent(const GEvent* iEvent);
 	void addEvent(const GEvent* iEvent) { m_events.push_back(iEvent); }
 	virtual void update(float iTime) = 0;
+	virtual sf::FloatRect getExtents() const = 0 ;
 	virtual ~GObj() {
 		m_textures.clear();
 		m_sprites.clear();

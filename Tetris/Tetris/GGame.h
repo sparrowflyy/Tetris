@@ -12,6 +12,8 @@ public:
 	virtual void postProcess() = 0;
 	friend class GLoop;
 	virtual ~GGame() { m_obj.clear(); }
-	float frameTime;
+	float m_frameTime;
+	int m_winWidth;
+	int m_winHeight;
 	GData m_obj;
 };
