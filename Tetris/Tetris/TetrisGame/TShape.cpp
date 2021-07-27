@@ -102,16 +102,19 @@ void TShape::moveShape(const sf::Vector2f& iMotion)
 	center.y += iMotion.y;
 }
 
-//bool TShape::glueShape(const TShape* iOtherShape) {
-//	for (int i = 0; i < parts; i++) {
-//		for (int j = 0; j < parts; j++) {
-//			if (m_rects[i].getGlobalBounds().intersects(iOtherShape->m_rects[j].getGlobalBounds()))
-//				shapesToGlue.push_back(std::make_pair(&m_rects[i], &iOtherShape->m_rects[j]));
-//		}
-//	}
-//	
-//	return false;
-//}
+RectInterInfo TShape::intersectShape(const TShape* ipOtherShape, sf::FloatRect& oIntersection) const
+{
+	sf::FloatRect inter;
+	for (int i = 0; i < parts; i++) {
+		for (int j = 0; j < parts; j++) {
+			if (m_rects[i].getGlobalBounds().intersects(ipOtherShape->m_rects[j].getGlobalBounds(), oIntersection)) {
+				return RectInterInfo(m_rects[i].getPosition(), ipOtherShape->m_rects[j].getPosition());
+			}
+		}
+	}
+	return RectInterInfo();
+}
+
 
 void TShape::revertLastEvent() {
 	if (m_events[eventIdx]->type == GEvent::EventType::RotationStart){
@@ -133,6 +136,15 @@ void TShape::draw(sf::RenderTarget& target, sf::RenderStates states) const
 		centerShape.setPosition(center);
 		centerShape.setFillColor(sf::Color::Red);
 		target.draw(centerShape);
+		sf::FloatRect ext = getExtents();
+		sf::RectangleShape rect({ ext.width,ext.height });
+		rect.setPosition(ext.left, ext.top);
+		//rect.setOrigin(ext.left, ext.top);
+
+	  rect.setFillColor(sf::Color::Transparent);
+		rect.setOutlineThickness(outlineThick);
+		rect.setOutlineColor(sf::Color::Red);
+		target.draw(rect);
 	}
 }
 

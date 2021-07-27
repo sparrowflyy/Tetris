@@ -46,7 +46,7 @@ private:
 	GObjIntersector intersector;
 	int idxActive = 0;
 	float elapsedTime = 0.0;
-	const float fallTime = 0.5;
+	const float fallTime = 0.001;
 	std::vector<GEvent*> m_events;
 
 };

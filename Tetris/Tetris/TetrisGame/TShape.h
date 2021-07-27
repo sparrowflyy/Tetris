@@ -28,13 +28,22 @@ namespace TetrisShapes {
 		L
 	};
 }
-
+	struct RectInterInfo
+	{
+		bool intersection = false;
+		sf::Vector2f myRectPos;
+		sf::Vector2f otherRectPos;
+		RectInterInfo() = default;
+		RectInterInfo(const sf::Vector2f& iMyRectPos, const sf::Vector2f& iOtherPos) 
+			: myRectPos(iMyRectPos), otherRectPos(iOtherPos) { intersection = true; }
+	};
 	class TShape : public GObj
 	{
 	public:
 		TShape(int iType, const sf::Vector2f& iCenter = TetrisShapes::center);
 		sf::FloatRect getExtents() const override;
 		//shape moves to input motion and freezes
+		RectInterInfo intersectShape(const TShape* ipOtherShape, sf::FloatRect& oIntersection) const;
 		void moveShape(const sf::Vector2f& iMotion);
 		const sf::Color& getRandColor();
 		void processEvent(float iTime, int iEventIdx) override;
