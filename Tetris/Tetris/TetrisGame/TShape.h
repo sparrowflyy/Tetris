@@ -28,14 +28,18 @@ namespace TetrisShapes {
 		L
 	};
 }
+
 	class TShape : public GObj
 	{
 	public:
 		TShape(int iType, const sf::Vector2f& iCenter = TetrisShapes::center);
-		void update(float iTime) override;
-		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 		sf::FloatRect getExtents() const override;
+		//shape moves to input motion and freezes
+		void moveShape(const sf::Vector2f& iMotion);
 		const sf::Color& getRandColor();
+		void processEvent(float iTime, int iEventIdx) override;
+		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+		void revertLastEvent() override;
 		void rotate(bool clockWise = true);
 		void init();
 		void initI();
@@ -45,19 +49,11 @@ namespace TetrisShapes {
 		void initT();
 		void initJ();
 		void initL();
-	
 		int type;
 	protected:
 		sf::Vector2f center;
 		std::vector<sf::RectangleShape> m_rects;
-		float elapsedTime = 0.0;
-		const float fallTime = 0.5;
+		std::vector<sf::Vector2f> m_cachePos;
 		bool rotated = false;
 	};
 
-
-	class TBackGround : public GObj
-	{
-	public:
-		
-	};

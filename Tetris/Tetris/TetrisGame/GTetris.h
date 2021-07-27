@@ -21,6 +21,7 @@ namespace Tetris
 	static const sf::Vector2f left(-1, 0);
 	static const sf::Vector2f right(1, 0);
 	static const sf::Vector2f down(0, 1);
+	static const sf::Vector2f up(1, 0);
 	
 }
 class GTetris : public GGame
@@ -42,9 +43,10 @@ private:
 	};
 	GEvent* getEvent(int iEventType);
 	void genRandTShape();
-
 	GObjIntersector intersector;
 	int idxActive = 0;
+	float elapsedTime = 0.0;
+	const float fallTime = 0.5;
 	std::vector<GEvent*> m_events;
 
 };

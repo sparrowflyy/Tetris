@@ -12,6 +12,7 @@ GTetris::GTetris(int iWinWidth, int iWinHeight, float iFrameTime):intersector(iW
 }
 
 void GTetris::genRandTShape() {
+	idxActive = m_obj.size();
 	TShape* rndShape = new TShape(GUtils::genRandomInt(0, TetrisShapes::numTypes - 1));
 	//TShape* rndShape = new TShape(TetrisShapes::J);
 	m_obj.push_back(rndShape);
@@ -51,11 +52,46 @@ void GTetris::processKeys(const sf::Event& event) {
 }
 
 void GTetris::processEvents(float iTime) {
-	
-	for (auto obj: m_obj) {
-		obj->update(iTime);
+	elapsedTime += iTime;
+	if (elapsedTime > fallTime) {
+		m_obj[idxActive]->addEvent(new GEventMotion(Tetris::down * float(TetrisShapes::rectSize) / iTime));
+		elapsedTime = 0.0;
 	}
+	for (int objIdx = 0; objIdx < m_obj.size(); objIdx++) {
+		bool glued = objIdx != idxActive;
+		for (int i = 0; i < m_obj[objIdx]->m_events.size(); i++) {
+			if (glued) break;
+			m_obj[objIdx]->processEvent(iTime, i);
+			sf::FloatRect objBox = m_obj[objIdx]->getExtents();
+			sf::FloatRect interBox;
+			if (intersector.intersectObjBoxWindow(m_obj[objIdx],interBox)) {
+				if (interBox.top < objBox.top + objBox.height) {
+					m_obj[objIdx]->move(Tetris::up * interBox.height);
+					glued = true;
+					genRandTShape();
+					break;
+				}
+				m_obj[objIdx]->revertLastEvent();
+				continue;
+			}
+			for (int j = 0; j < m_obj.size(); j++) {
+				if (objIdx == j)
+					continue;
+				if (GObjIntersector::intersectObjBoxes(m_obj[objIdx], m_obj[j], interBox)) {
 	
+					if (interBox.top < objBox.top + objBox.height) {
+						m_obj[objIdx]->move(Tetris::up * interBox.height);
+						glued = true;
+						genRandTShape();
+						break;
+					}
+					m_obj[objIdx]->revertLastEvent();
+					break;
+				}
+			}
+		}
+		m_obj[objIdx]->m_events.clear();
+	}
 }
 
 void GTetris::postProcess() {

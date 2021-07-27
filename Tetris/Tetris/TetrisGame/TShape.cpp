@@ -12,6 +12,7 @@ TShape::TShape(int iType, const sf::Vector2f& iCenter) {
 	parts = 4;
 	type = iType;
 	center = iCenter;
+	m_cachePos.resize(parts+1);
 	init();
 	switch (iType)
 		{
@@ -72,36 +73,55 @@ void TShape::rotate(bool clockWise)
 	
 }
 
-void TShape::update(float iTime)
+void TShape::processEvent(float iTime, int iEventIdx)
 {
-	elapsedTime += iTime;
-	if (elapsedTime > fallTime) {
-		addEvent(new GEventMotion(Tetris::down * float(TetrisShapes::rectSize)/iTime));
-		elapsedTime = 0.0;
+	eventIdx = iEventIdx;
+	for (int i = 0; i < parts; i++) {
+		m_cachePos[i] = m_rects[i].getPosition();
 	}
-	for (int i = 0; i < m_events.size(); i++) {
-
-		if (m_events[i]->type == GEvent::EventType::RotationEnd && rotated) {
-			rotated = false;
-		}
-		if (m_events[i]->type == GEvent::EventType::RotationStart && !rotated) {
-			rotated = true;
-			rotate();
-		}
-		if (m_events[i]->type == GEvent::EventType::Motion) {
-			GEventMotion* event = (GEventMotion*)(m_events[i]);
-			const sf::Vector2f& motion = event->getMotion() * iTime;
-			for (int rectIdx = 0; rectIdx < TetrisShapes::shapeParts; rectIdx++) {
-				m_rects[rectIdx].move(motion);
-			}
-			center.x += motion.x;
-			center.y += motion.y;
-		}
-
+	m_cachePos.back() = center;
+	if (m_events[iEventIdx]->type == GEvent::EventType::RotationEnd && rotated) {
+		rotated = false;
 	}
-	m_events.clear();
+	if (m_events[iEventIdx]->type == GEvent::EventType::RotationStart && !rotated) {
+		rotated = true;
+		rotate();
+	}
+	if (m_events[iEventIdx]->type == GEvent::EventType::Motion) {
+		GEventMotion* event = (GEventMotion*)(m_events[iEventIdx]);
+		const sf::Vector2f& motion = event->getMotion() * iTime;
+		moveShape(motion);
+	}
+}
+void TShape::moveShape(const sf::Vector2f& iMotion)
+{
+	for (int rectIdx = 0; rectIdx < TetrisShapes::shapeParts; rectIdx++) {
+		m_rects[rectIdx].move(iMotion);
+	}
+	center.x += iMotion.x;
+	center.y += iMotion.y;
 }
 
+//bool TShape::glueShape(const TShape* iOtherShape) {
+//	for (int i = 0; i < parts; i++) {
+//		for (int j = 0; j < parts; j++) {
+//			if (m_rects[i].getGlobalBounds().intersects(iOtherShape->m_rects[j].getGlobalBounds()))
+//				shapesToGlue.push_back(std::make_pair(&m_rects[i], &iOtherShape->m_rects[j]));
+//		}
+//	}
+//	
+//	return false;
+//}
+
+void TShape::revertLastEvent() {
+	if (m_events[eventIdx]->type == GEvent::EventType::RotationStart){
+		rotated = false;
+	}
+	for (int i = 0; i < parts; i++) {
+		m_rects[i].setPosition(m_cachePos[i]);
+	}
+	center = m_cachePos[4];
+} 
 void TShape::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	for (int i = 0; i < TetrisShapes::shapeParts; i ++) {
@@ -128,7 +148,7 @@ sf::FloatRect TShape::getExtents() const {
 		if (curRect.left < xMin)
 			xMin = curRect.left;
 		if (curRect.left + curRect.width > xMax)
-			xMax = curRect.left;
+			xMax = curRect.left + curRect.width;
 		if (curRect.top < yMin)
 			yMin = curRect.top;
 		if (curRect.top + curRect.height > yMax)
