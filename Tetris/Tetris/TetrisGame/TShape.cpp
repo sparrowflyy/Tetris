@@ -166,7 +166,8 @@ sf::FloatRect TShape::getExtents() const {
 		if (curRect.top + curRect.height > yMax)
 			yMax = curRect.top + curRect.height;
 	}
-	return sf::FloatRect(xMin,yMin,xMax-xMin, yMax - yMin);
+
+	return sf::FloatRect(xMin, yMin, xMax - xMin, yMax - yMin);
 }
 
 

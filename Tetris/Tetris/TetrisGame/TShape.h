@@ -64,5 +64,6 @@ namespace TetrisShapes {
 		std::vector<sf::RectangleShape> m_rects;
 		std::vector<sf::Vector2f> m_cachePos;
 		bool rotated = false;
+		int parts;
 	};
 

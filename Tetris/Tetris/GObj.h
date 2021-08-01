@@ -20,7 +20,7 @@ public:
 	//index of sprite to draw
 	int curIdx = 0;
 	int eventIdx = 0;
-	int parts;
+
 	std::vector<std::shared_ptr<sf::Texture>> m_textures {};
 	std::vector<std::shared_ptr<sf::Sprite>> m_sprites {};
 	std::vector<const GEvent*> m_events;
