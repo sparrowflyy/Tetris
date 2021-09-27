@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "GEvent.h"
+#include <memory>
 
 class GObj :public sf::Drawable, public sf::Transformable
 {

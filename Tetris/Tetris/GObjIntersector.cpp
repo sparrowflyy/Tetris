@@ -1,8 +1,8 @@
 #include "GObjIntersector.h"
 
 bool GObjIntersector::compareBoxes(const sf::FloatRect& box1, const sf::FloatRect& box2, double tol) {
-	return fabs(box1.left - box2.left) < tol && fabs(box1.top - box2.top) < tol
-		&& fabs(box1.width - box2.width) < tol && fabs(box1.height - box2.height) < tol;
+	return abs(box1.left - box2.left) < tol && abs(box1.top - box2.top) < tol
+		&& abs(box1.width - box2.width) < tol && abs(box1.height - box2.height) < tol;
 	
 }
 GObjIntersector::GObjIntersector(int iWinWidth, int iWinHeight)

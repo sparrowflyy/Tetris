@@ -1,5 +1,6 @@
 #pragma once
 #include "../GObj.h"
+#include "TField.h"
 
 static bool debug = true;
 
@@ -9,7 +10,7 @@ namespace TetrisShapes {
 	static const float outlineThick = 2;
 	static const int numTypes = 7;
 	static const float shapeSpeed = 100;
-	static sf::Vector2f center{ 200,100 };
+	static sf::Vector2i center{ 10,2 };
 	static const std::vector<sf::Color> shapeColors {
 		sf::Color(153,0,153), //purple
 		sf::Color(204,255,51),	//yellow
@@ -28,23 +29,12 @@ namespace TetrisShapes {
 		L
 	};
 }
-	struct RectInterInfo
-	{
-		bool intersection = false;
-		sf::Vector2f myRectPos;
-		sf::Vector2f otherRectPos;
-		RectInterInfo() = default;
-		RectInterInfo(const sf::Vector2f& iMyRectPos, const sf::Vector2f& iOtherPos) 
-			: myRectPos(iMyRectPos), otherRectPos(iOtherPos) { intersection = true; }
-	};
-	class TShape : public GObj
+    class TShape : public GObj
 	{
 	public:
-		TShape(int iType, const sf::Vector2f& iCenter = TetrisShapes::center);
+		TShape(TField* field , int iType, const sf::Vector2i& iMaxPoint = TetrisShapes::center);
 		sf::FloatRect getExtents() const override;
-		//shape moves to input motion and freezes
-		RectInterInfo intersectShape(const TShape* ipOtherShape, sf::FloatRect& oIntersection) const;
-		void moveShape(const sf::Vector2f& iMotion);
+		void moveShape(const sf::Vector2i& iMotion);
 		const sf::Color& getRandColor();
 		void processEvent(float iTime, int iEventIdx) override;
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
@@ -59,10 +49,10 @@ namespace TetrisShapes {
 		void initJ();
 		void initL();
 		int type;
-	protected:
-		sf::Vector2f center;
-		std::vector<sf::RectangleShape> m_rects;
-		std::vector<sf::Vector2f> m_cachePos;
+	private:
+        std::unique_ptr<TField> field;
+		sf::Vector2i maxPoint;
+		std::vector<std::pair<short,short>> indices;
 		bool rotated = false;
 		int parts;
 	};

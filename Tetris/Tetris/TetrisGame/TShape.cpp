@@ -8,11 +8,10 @@
 #include "../GUtils.h"
 using namespace TetrisShapes;
 
-TShape::TShape(int iType, const sf::Vector2f& iCenter) {
+TShape::TShape(int iType, const sf::Vector2i& iMaxPoint) {
 	parts = 4;
 	type = iType;
-	center = iCenter;
-	m_cachePos.resize(parts+1);
+	maxPoint = iMaxPoint;
 	init();
 	switch (iType)
 		{
@@ -51,11 +50,11 @@ TShape::TShape(int iType, const sf::Vector2f& iCenter) {
 			initL();
 			break;
 		}
-			default:
-			{
-				break;
-			}
-		}
+        default:
+        {
+            break;
+        }
+        }
 }
 void TShape::rotate(bool clockWise)
 {
@@ -173,35 +172,31 @@ sf::FloatRect TShape::getExtents() const {
 
 void TShape::init() {
 	const sf::Color& shapeColor = getRandColor();
-	for (int i = 0; i < TetrisShapes::shapeParts; i++) {
-		m_rects.push_back(sf::RectangleShape(sf::Vector2f(TetrisShapes::rectSize, TetrisShapes::rectSize)));
-		m_rects.back().setFillColor(shapeColor);
-		m_rects.back().setOutlineColor(sf::Color::Black);
-		m_rects.back().setOutlineThickness(-TetrisShapes::outlineThick);
-	}
+    indices.resize(4);
 }
 
 void TShape::initI()
 {
-	m_rects[0].setPosition(center.x, center.y-rectSize/2);
-	sf::Vector2f firstPos = m_rects[0].getPosition();
-	m_rects[1].setPosition(firstPos.x + rectSize - outlineThick, firstPos.y);
-	m_rects[2].setPosition(firstPos.x - rectSize + outlineThick, firstPos.y);
-	m_rects[3].setPosition(firstPos.x - 2 * rectSize + 2*outlineThick,firstPos.y);
-
+    indices[0] = {maxPoint.x, maxPoint.y};
+    indices[1] = {maxPoint.x, maxPoint.y-1};
+    indices[2] = {maxPoint.x, maxPoint.y-2};
+    indices[3] = {maxPoint.x, maxPoint.y-3};
 }
 
 void TShape::initO()
 {
-	m_rects[0].setPosition(center);
-	sf::Vector2f firstPos = m_rects[0].getPosition();
-	m_rects[1].setPosition(firstPos.x - rectSize + outlineThick, firstPos.y);
-	m_rects[2].setPosition(firstPos.x - rectSize + outlineThick, firstPos.y-rectSize + outlineThick);
-	m_rects[3].setPosition(firstPos.x, firstPos.y - rectSize + outlineThick);
+    indices[0] = {maxPoint.x, maxPoint.y};
+    indices[1] = {maxPoint.x+1, maxPoint.y};
+    indices[2] = {maxPoint.x, maxPoint.y-1};
+    indices[3] = {maxPoint.x+1, maxPoint.y-1};
 }
 
 void TShape::initT()
 {
+    indices[0] = {maxPoint.x, maxPoint.y};
+    indices[1] = {maxPoint.x+1, maxPoint.y};
+    indices[2] = {maxPoint.x-1, maxPoint.y};
+    indices[3] = {maxPoint.x, maxPoint.y+1};
 	m_rects[0].setPosition(center.x-rectSize/2,center.y-rectSize/2);
 	sf::Vector2f firstPos = m_rects[0].getPosition();
 	m_rects[1].setPosition(firstPos.x + rectSize - outlineThick, firstPos.y);

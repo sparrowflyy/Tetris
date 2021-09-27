@@ -8,22 +8,23 @@ GTetris::GTetris(int iWinWidth, int iWinHeight, float iFrameTime):intersector(iW
 	m_winWidth = iWinWidth;
 	m_winHeight = iWinHeight;
 	m_frameTime = iFrameTime;
-	TField* field = new TField(iWinWidth, iWinHeight);
+	auto* field = new TField(iWinWidth, iWinHeight);
 	m_obj.push_back(field);
 }
 
 void GTetris::genRandTShape() {
 	idxActive = m_obj.size();
-	TShape* rndShape = new TShape(GUtils::genRandomInt(0, TetrisShapes::numTypes - 1));
+	auto* rndShape = new TShape(GUtils::genRandomInt(0, TetrisShapes::numTypes - 1));
 	//TShape* rndShape = new TShape(TetrisShapes::J);
 	m_obj.push_back(rndShape);
 }
 
 void GTetris::init() {
-	m_events.resize(4);
+	m_events.resize(5);
 
-	m_events[Events::MoveLeft] = new GEventMotion(Tetris::left* TetrisShapes::shapeSpeed);
-	m_events[Events::MoveRight] = new GEventMotion(Tetris::right * TetrisShapes::shapeSpeed);
+	m_events[Events::MoveLeft] = new GEventMotion(Tetris::left);
+	m_events[Events::MoveRight] = new GEventMotion(Tetris::right);
+    m_events[Events::MoveDown] = new GEventMotion(Tetris::right);
 	m_events[Events::RotateStart] = new TRotationEventStart();
 	m_events[Events::RotateEnd] = new TRotationEventEnd();
 	genRandTShape();
@@ -40,11 +41,13 @@ void GTetris::processKeys(const sf::Event& event) {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
 		m_obj[idxActive]->addEvent(getEvent(Events::MoveRight));
 	}
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+        m_obj[idxActive]->addEvent(getEvent(Events::MoveDown));
+    }
 	if (event.type == sf::Event::KeyReleased) {
 		if (event.key.code == sf::Keyboard::W) {
 			m_obj[idxActive]->addEvent(getEvent(Events::RotateEnd));
 		}
-
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
 		m_obj[idxActive]->addEvent(getEvent(Events::RotateStart));
@@ -55,83 +58,16 @@ void GTetris::processKeys(const sf::Event& event) {
 void GTetris::processEvents(float iTime) {
 	elapsedTime += iTime;
 	if (elapsedTime > fallTime) {
-		m_obj[idxActive]->addEvent(new GEventMotion(Tetris::down*float(250.00)/* * float(TetrisShapes::rectSize) / iTime*/));
+		m_obj[idxActive]->addEvent(new GEventMotion(Tetris::down));
 		elapsedTime = 0.0;
 	}
-	for (int objIdx = 0; objIdx < m_obj.size(); objIdx++) {
-		TShape* curShape = (TShape*)m_obj[objIdx];
-		bool glued = objIdx != idxActive;
+	for (auto & objIdx : m_obj) {
+		auto* curShape = (TShape*)objIdx;
 		for (int i = 0; i < curShape->m_events.size(); i++) {
-			if (glued) break;
 			curShape->processEvent(iTime, i);
-			sf::FloatRect objBox = m_obj[objIdx]->getExtents();
-			sf::FloatRect interBox;
-			if (intersector.intersectObjBoxWindow(curShape,interBox)) {
-				if (interBox.top < objBox.top + objBox.height) {
-					//curShape->moveShape(Tetris::up * interBox.height );
-					glued = true;
-					genRandTShape();
-					break;
-				}
-				curShape->revertLastEvent();
-				continue;
-			}
-			sf::FloatRect otherBox;
-			for (int j = 0; j < m_obj.size(); j++) {
-				if (objIdx == j)
-					continue;
-				TShape* otherShape = (TShape*)m_obj[j];
-				otherBox = otherShape->getExtents();
-				if (GObjIntersector::intersectObjBoxes(curShape, otherShape, interBox)) {
-					if (curShape->m_events[i]->type == GEvent::EventType::Motion)
-					{
-						GEventMotion* event = (GEventMotion*)(curShape->m_events[i]);
-						sf::Vector2f motion = event->getMotion();
-						RectInterInfo interInfo = curShape->intersectShape(otherShape, interBox);
-						if (interInfo.intersection) {
-							if (event->getMotion().x == 0.0)
-							{
-
-								float dy = fabs(TetrisShapes::rectSize - fabs(interInfo.myRectPos.y - interInfo.otherRectPos.y));
-								curShape->moveShape(Tetris::up * (dy - TetrisShapes::outlineThick));
-								glued = true;
-								genRandTShape();
-								break;
-							}
-							else
-							{
-								m_obj[objIdx]->revertLastEvent();
-								break;
-							}
-						}
-					}
-					else {
-						m_obj[objIdx]->revertLastEvent();
-						break;
-					}
-				
-					
-					/*if (interInfo.intersection && (objBox.top < otherBox.top) && width >= TetrisShapes::rectSize ) {
-						float dy = fabs(TetrisShapes::rectSize - fabs(interInfo.myRectPos.y - interInfo.otherRectPos.y));
-						curShape->moveShape(Tetris::up * (dy- TetrisShapes::outlineThick));
-						glued = true;
-						genRandTShape();
-						break;
-					}*/
-					/*else {
-						m_obj[objIdx]->revertLastEvent();
-						break;
-					}*/
-				}
-					
-			}
 		}
-	m_obj[objIdx]->m_events.clear();
+	objIdx->m_events.clear();
 	}
-
 }
-
-
 void GTetris::postProcess() {
-	
 }

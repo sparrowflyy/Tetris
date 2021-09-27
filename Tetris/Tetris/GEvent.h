@@ -18,12 +18,14 @@ public:
 	virtual ~GEvent() {}
 };
 
+
+template <typename T>
 class GEventMotion: public GEvent
 {
 public:
-	GEventMotion(const sf::Vector2f& iMotion) : GEvent(EventType::Motion), motion(iMotion) {}
-	const sf::Vector2f& getMotion() const { return motion; }
+	GEventMotion(const sf::Vector2<T>& iMotion) : GEvent(EventType::Motion), motion(iMotion) {}
+	const sf::Vector2<T>& getMotion() const { return motion; }
   ~GEventMotion() {}
 private:
-	sf::Vector2f motion;
+	sf::Vector2<T> motion;
 };

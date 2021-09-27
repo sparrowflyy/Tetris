@@ -13,15 +13,15 @@ class TRotationEventEnd : public GEvent
 {
 public:
 	TRotationEventEnd() : GEvent(GEvent::EventType::RotationEnd) {}
-	~TRotationEventEnd() {};
+	~TRotationEventEnd()  = default;
 };
 
 namespace Tetris
 {
-	static const sf::Vector2f left(-1, 0);
-	static const sf::Vector2f right(1, 0);
-	static const sf::Vector2f down(0, 1);
-	static const sf::Vector2f up(0, -1);
+	static const sf::Vector2i left(-1, 0);
+	static const sf::Vector2i right(1, 0);
+	static const sf::Vector2i down(0, 1);
+	static const sf::Vector2i up(0, -1);
 	
 }
 class GTetris : public GGame
@@ -38,15 +38,15 @@ private:
 	{
 		MoveLeft,
 		MoveRight,
+        MoveDown,
 		RotateStart,
 		RotateEnd
 	};
 	GEvent* getEvent(int iEventType);
 	void genRandTShape();
-	GObjIntersector intersector;
+
 	int idxActive = 0;
 	float elapsedTime = 0.0;
-	const float fallTime = 0.001;
-	std::vector<GEvent*> m_events;
-
+	const float fallTime = 1.0;
+    std::vector<GEvent*> m_events;
 };
