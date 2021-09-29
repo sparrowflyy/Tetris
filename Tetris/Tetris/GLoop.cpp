@@ -1,8 +1,8 @@
 #include "GLoop.h"
-#include "TetrisGame/TShape.h"
+
 
 void GLoop::loop() {
-  sf::RenderWindow window(sf::VideoMode(game->m_winWidth, game->m_winHeight), "Tetris");
+  sf::RenderWindow window(sf::VideoMode(game->winWidth, game->winHeight), "Tetris");
   game->init();
   sf::Clock clock;
   float dt = 0;
@@ -19,7 +19,7 @@ void GLoop::loop() {
     dt += elapsedTime.asSeconds();
     window.clear();
     game->processKeys(event);
-    if (dt >= game->m_frameTime) {
+    if (dt >= game->frameTime) {
       game->processEvents(dt);
       dt = 0;
 		  clock.restart();

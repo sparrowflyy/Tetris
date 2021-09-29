@@ -4,53 +4,40 @@
 #include "TField.h"
 #include "../GUtils.h"
 
-GTetris::GTetris(int iWinWidth, int iWinHeight, float iFrameTime):intersector(iWinWidth,iWinHeight) {
-	m_winWidth = iWinWidth;
-	m_winHeight = iWinHeight;
-	m_frameTime = iFrameTime;
+GTetris::GTetris(int iWinWidth, int iWinHeight, float iFrameTime) {
+	winWidth = iWinWidth;
+	winHeight = iWinHeight;
+	frameTime = iFrameTime;
 	auto* field = new TField(iWinWidth, iWinHeight);
-	m_obj.push_back(field);
-}
-
-void GTetris::genRandTShape() {
-	idxActive = m_obj.size();
-	auto* rndShape = new TShape(GUtils::genRandomInt(0, TetrisShapes::numTypes - 1));
-	//TShape* rndShape = new TShape(TetrisShapes::J);
-	m_obj.push_back(rndShape);
+	objects.push_back(field);
 }
 
 void GTetris::init() {
-	m_events.resize(5);
-
-	m_events[Events::MoveLeft] = new GEventMotion(Tetris::left);
-	m_events[Events::MoveRight] = new GEventMotion(Tetris::right);
-    m_events[Events::MoveDown] = new GEventMotion(Tetris::right);
-	m_events[Events::RotateStart] = new TRotationEventStart();
-	m_events[Events::RotateEnd] = new TRotationEventEnd();
-	genRandTShape();
-	idxActive = 0;
-}
-GEvent* GTetris::getEvent(int iEventType) {
-	return m_events[iEventType];
+    eventsPool.resize(5);
+    eventsPool[Events::MoveLeft] = new GEventMotion(Tetris::left);
+    eventsPool[Events::MoveRight] = new GEventMotion(Tetris::right);
+    eventsPool[Events::MoveDown] = new GEventMotion(Tetris::right);
+    eventsPool[Events::RotateStart] = new TRotationEventStart();
+    eventsPool[Events::RotateEnd] = new TRotationEventEnd();
 }
 
 void GTetris::processKeys(const sf::Event& event) {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-		m_obj[idxActive]->addEvent(getEvent(Events::MoveLeft));
+		objects[fieldIdx]->addEvent(eventsPool[Events::MoveLeft]);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-		m_obj[idxActive]->addEvent(getEvent(Events::MoveRight));
+        objects[fieldIdx]->addEvent(eventsPool[Events::MoveRight]);
 	}
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-        m_obj[idxActive]->addEvent(getEvent(Events::MoveDown));
+        objects[fieldIdx]->addEvent(eventsPool[Events::MoveDown]);
     }
 	if (event.type == sf::Event::KeyReleased) {
 		if (event.key.code == sf::Keyboard::W) {
-			m_obj[idxActive]->addEvent(getEvent(Events::RotateEnd));
+			objects[fieldIdx]->addEvent(eventsPool[Events::RotateEnd]);
 		}
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-		m_obj[idxActive]->addEvent(getEvent(Events::RotateStart));
+		objects[fieldIdx]->addEvent(eventsPool[Events::RotateStart]);
 	}
 
 }
@@ -58,16 +45,29 @@ void GTetris::processKeys(const sf::Event& event) {
 void GTetris::processEvents(float iTime) {
 	elapsedTime += iTime;
 	if (elapsedTime > fallTime) {
-		m_obj[idxActive]->addEvent(new GEventMotion(Tetris::down));
+		objects[fieldIdx]->addEvent(eventsPool[Events::MoveDown]);
 		elapsedTime = 0.0;
 	}
-	for (auto & objIdx : m_obj) {
-		auto* curShape = (TShape*)objIdx;
-		for (int i = 0; i < curShape->m_events.size(); i++) {
-			curShape->processEvent(iTime, i);
-		}
+    for (auto & obj : objects) {
+        for (int i = 0; i < obj->events.size(); i++) {
+            obj->processEvent(iTime, i);
+        }
+        obj->events.clear();
+    }
+/*	for (auto & obj : objects) {
+		auto* curShape = (TShape*)obj;
+
 	objIdx->m_events.clear();
-	}
+	}*/
 }
 void GTetris::postProcess() {
+}
+
+GTetris::~GTetris() noexcept {
+    for (auto * event : eventsPool){
+        delete event;
+    }
+    for (auto * obj : objects){
+        delete obj;
+    }
 }

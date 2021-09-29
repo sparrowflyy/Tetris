@@ -9,7 +9,6 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -gdwarf-3")
 #add_executable(Tetris main.cpp)
 set(PROJECT_HEADERS
         TetrisGame/GTetris.h
-        TetrisGame/TShape.h
         TetrisGame/TField.h
         GEvent.h
         GGame.h
@@ -25,7 +24,6 @@ set(PROJECT_SOURCES
         GObj.cpp
         GLoop.cpp
         GObjIntersector.cpp
-        TetrisGame/TShape.cpp
         )
 
 add_executable(Tetris main.cpp ${PROJECT_SOURCES} ${PROJECT_HEADERS})

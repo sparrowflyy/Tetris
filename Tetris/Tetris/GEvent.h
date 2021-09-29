@@ -12,10 +12,10 @@ public:
 		RotationStart,
 		RotationEnd
 	};
-	GEvent(int iType = EventType::NullEvent) : type(iType) {}
+	explicit GEvent(int iType = EventType::NullEvent) : type(iType) {}
 	
 	int type;
-	virtual ~GEvent() {}
+	virtual ~GEvent() = default;
 };
 
 
@@ -23,9 +23,9 @@ template <typename T>
 class GEventMotion: public GEvent
 {
 public:
-	GEventMotion(const sf::Vector2<T>& iMotion) : GEvent(EventType::Motion), motion(iMotion) {}
+	explicit GEventMotion(const sf::Vector2<T>& iMotion) : GEvent(EventType::Motion), motion(iMotion) {}
 	const sf::Vector2<T>& getMotion() const { return motion; }
-  ~GEventMotion() {}
+    ~GEventMotion() = default;
 private:
 	sf::Vector2<T> motion;
 };
