@@ -8,6 +8,7 @@ GTetris::GTetris(int iWinWidth, int iWinHeight, float iFrameTime) {
 	winWidth = iWinWidth;
 	winHeight = iWinHeight;
 	frameTime = iFrameTime;
+    init();
 	auto* field = new TField(iWinWidth, iWinHeight);
 	objects.push_back(field);
 }

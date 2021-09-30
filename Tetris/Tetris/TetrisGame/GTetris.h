@@ -26,7 +26,8 @@ namespace Tetris
 class GTetris final: public GGame
 {
 public:
-	explicit GTetris(int iWinWidth = 500, int iWinHeight = 600, float iFrameTime = 1e-6);
+    //TODO: correct width height
+	explicit GTetris(int iWinWidth = 506, int iWinHeight = 596, float iFrameTime = 1e-6);
 	void init() override;
 	void processKeys(const sf::Event& event) override;
 	void processEvents(float iTime) override;

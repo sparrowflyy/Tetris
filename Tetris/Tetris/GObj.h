@@ -7,7 +7,7 @@ class GObj :public sf::Drawable, public sf::Transformable
 {
 public:
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override {};
-	void addEvent(const GEvent* iEvent) { m_events.push_back(iEvent); }
+	void addEvent(const GEvent* iEvent) { events.push_back(iEvent); }
 	virtual void processEvent(float iTime, int iEventIdx) = 0;
 	virtual void revertLastEvent() = 0;
     virtual sf::FloatRect getExtents() const {return  {};} ;

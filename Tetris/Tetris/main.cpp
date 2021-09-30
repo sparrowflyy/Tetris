@@ -10,6 +10,5 @@ int main()
   GTetris* game = new GTetris();
   GLoop gLoop(game);
   gLoop.loop();
-
   return 0;
 }

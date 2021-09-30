@@ -32,6 +32,7 @@ class TShape final{
 public:
     TShape(int type, const sf::Vector2i& iMaxPoint = TShapes::start);
     const sf::Color& getRandColor();
+    void move(const sf::Vector2i& iMotion);
     void init();
     void initI();
     void initZ();
@@ -41,10 +42,10 @@ public:
     void initJ();
     void initL();
     int type;
-private:
-    sf::Vector2i maxPoint;
-    std::vector<std::pair<short,short>> indices;
+    sf::Vector2i center;
+    std::vector<std::pair<int,int>> indices;
     bool rotated = false;
+    sf::Color color;
 };
 class TField final : public GObj {
     public:
@@ -55,13 +56,13 @@ class TField final : public GObj {
         ~TField() final;
     private:
         void genRandTShape();
-/*        void moveShape(const sf::Vector2i& iMotion);
-        void rotateShape(bool iClockWise = true);*/
+        void moveActiveShape(const sf::Vector2i& iMotion);
+        void rotateActiveShape(bool iClockWise = true);
         void markRect(short i, short j, sf::Color const& iColor = sf::Color::Transparent);
         int getMark(short i, short j);
         int idxActive = 0;
-        short fieldWidth;
-        short fieldHeight;
-        std::vector<sf::RectangleShape> grid;
+        int fieldWidth;
+        int fieldHeight;
+        std::vector<std::vector<sf::RectangleShape>> grid;
         std::vector<TShape> shapes;
     };

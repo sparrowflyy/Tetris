@@ -24,8 +24,8 @@ void GLoop::loop() {
       dt = 0;
 		  clock.restart();
     }
-    for (int i = 0; i < game->m_obj.size(); i++) {
-      game->m_obj[i]->draw(window, sf::RenderStates::Default);
+    for (auto* obj : game->objects) {
+      obj->draw(window, sf::RenderStates::Default);
     }
     window.display();
   }
