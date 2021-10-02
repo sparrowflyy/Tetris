@@ -6,13 +6,13 @@ class TRotationEventStart final: public GEvent
 {
 public:
 	TRotationEventStart() : GEvent(GEvent::EventType::RotationStart){}
-	~TRotationEventStart() final = default;
+	~TRotationEventStart()  = default;
 };
 class TRotationEventEnd final : public GEvent
 {
 public:
 	TRotationEventEnd() : GEvent(GEvent::EventType::RotationEnd) {}
-	~TRotationEventEnd() final = default;
+	~TRotationEventEnd() = default;
 };
 
 namespace Tetris
@@ -27,22 +27,23 @@ class GTetris final: public GGame
 {
 public:
     //TODO: correct width height
-	explicit GTetris(int iWinWidth = 506, int iWinHeight = 596, float iFrameTime = 1e-6);
+	explicit GTetris(int iWinWidth = 500, int iWinHeight = 600, float iFrameTime = 1e-6);
 	void init() override;
-	void processKeys(const sf::Event& event) override;
+	void processKeys(const sf::Event& event, float iTime) override;
 	void processEvents(float iTime) override;
 	void postProcess() override;
-	~GTetris() final;
+	~GTetris() ;
 private:
 	enum Events
 	{
 		MoveLeft,
 		MoveRight,
-        MoveDown,
+    MoveDown,
+    MoveEnd,
 		RotateStart,
 		RotateEnd
 	};
-    const int fieldIdx = 0;
 	float elapsedTime = 0.0;
-	const float fallTime = 1.0;
+	float fallTime = 0.25;
+  const float motionTime = 0.05;
 };

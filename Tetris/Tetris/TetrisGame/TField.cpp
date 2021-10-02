@@ -122,19 +122,30 @@ void TShape::move(const sf::Vector2i &iMotion) {
     center += iMotion;
 }
 
+void TShape::rotate() {
+  if (type == TShapes::Type::O)
+    return;
+  for (auto& [x,y] : indices){
+    int Y = y - center.y;
+    int X = x - center.x;
+    x = center.x - Y;
+    y = center.y + X;
+  }
+  rotating = true;
+}
 TField::TField(int iWinWidth, int iWinHeight)
 {
-  fieldWidth = int((iWinWidth+2*TShapes::outlineThick)/ TShapes::rectSize);
-  fieldHeight = int((iWinHeight+2*TShapes::outlineThick)/ TShapes::rectSize);
+  float rectSize = (iWinWidth*0.9)/fieldWidth;
+  fieldHeight = int(iWinHeight*0.9/rectSize);
   grid.resize(fieldWidth);
 	for (int i = 0; i < fieldWidth; i ++) {
     grid[i].resize(fieldHeight);
 		for (int j = 0; j < fieldHeight; j ++) {
       //TODO: need new?
-			auto* cell = new sf::RectangleShape(sf::Vector2f(TShapes::rectSize, TShapes::rectSize));
-			cell->setPosition( i * TShapes::rectSize - TShapes::outlineThick, j * TShapes::rectSize-TShapes::outlineThick);
+			auto* cell = new sf::RectangleShape(sf::Vector2f(rectSize,rectSize));
+			cell->setPosition( i * rectSize + iWinWidth*0.05 , j * rectSize + iWinHeight*0.05);
 			cell->setFillColor(sf::Color::White);
-			cell->setOutlineThickness(TShapes::outlineThick);
+			cell->setOutlineThickness(-TShapes::outlineThick);
 			cell->setOutlineColor(sf::Color::Black);
 			grid[i][j] = (*cell);
 		}
@@ -147,37 +158,17 @@ void TField::genRandTShape() {
     for (auto& [x,y] : rndShape->indices) {
         markRect(x,y,rndShape->color);
     }
-    //TShape* rndShape = new TShape(TetrisShapes::J);
     shapes.push_back(*rndShape);
-    //std::cout<<rndShape->type;
-   // std::flush(std::cout);
 }
 
 void TField::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 	for (const auto& row: grid) {
-    for (const auto& cell: row)
-		target.draw(cell);
+    std::for_each(row.begin(),row.end(),[&](const sf::RectangleShape& rect){target.draw(rect);});
+/*    for (const auto& cell: row)
+		  target.draw(cell);*/
 	}
 }
 
-void TField::moveActiveShape(const sf::Vector2i &iMotion) {
-    TShape& activeShape = *shapes.rbegin();
-
-    activeShape.move(iMotion);
-}
-void TField::rotateActiveShape(bool iClockWise) {
-    TShape& activeShape = *shapes.rbegin();
-    if (activeShape.type == TShapes::Type::O)
-        return;
-    int dir = iClockWise ? 1 : -1;
-    auto center = activeShape.center;
-    for (auto& [x,y] : activeShape.indices){
-        int X = y - center.y;
-        int Y = x - center.x;
-        x = center.x - X;
-        y = center.y - Y;
-    }
-}
 void TField::markRect(short i, short j, const sf::Color &iColor) {
     grid[i][j].setFillColor(iColor);
 }
@@ -190,10 +181,43 @@ int TField::getMark(short i, short j) {
     return Cell::Empty;
 }
 
+bool TField::checkShape(const TShape &iShape) {
+  for (const auto& [x,y] : iShape.indices){
+    if (x < 0 || x > fieldWidth - 1)
+      return false;
+    if (y < 0 || y > fieldHeight - 1){
+      return false;
+    }
+  }
+  return true;
+}
 void TField::processEvent(float iTime, int iEventIdx) {
+  static float elapsedTime = 0.0;
+  elapsedTime+=iTime;
+  TShape activeShapeCopy = *shapes.rbegin();
   const GEvent* event = events[iEventIdx];
-  if (event->type == GEvent::EventType::Motion) {
-
+  if (event->type == GEvent::EventType::MotionStart) {
+    auto* motionEvent = (GEventMotion<int>*)event;
+    activeShapeCopy.move(motionEvent->getMotion());
+  }
+  if (event->type == GEvent::EventType::MotionEnd && activeShapeCopy.moving) {
+    activeShapeCopy.moving = false;
+  }
+  if (event->type == GEvent::EventType::RotationStart && !activeShapeCopy.rotating) {
+    activeShapeCopy.rotate();
+  }
+  if (event->type == GEvent::EventType::RotationEnd && activeShapeCopy.rotating) {
+    activeShapeCopy.rotating = false;
+  }
+  if (checkShape(activeShapeCopy)){
+    TShape& activeShape = *shapes.rbegin();
+    for (auto& [x,y]:activeShape.indices){
+      markRect(x,y);
+    }
+    activeShape = activeShapeCopy;
+    for (auto& [x,y]:activeShape.indices){
+      markRect(x,y,activeShape.color);
+    }
   }
 }
 
@@ -203,6 +227,5 @@ void TField::revertLastEvent() {
 
 TField::~TField()
 {
-    //TODO: memory leaks?
-    grid.clear();
+  grid.clear();
 }

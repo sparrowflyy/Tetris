@@ -14,11 +14,10 @@ void GLoop::loop() {
       if (event.type == sf::Event::Closed)
         window.close();
     }
-
     sf::Time elapsedTime = clock.getElapsedTime();
     dt += elapsedTime.asSeconds();
     window.clear();
-    game->processKeys(event);
+    game->processKeys(event,dt);
     if (dt >= game->frameTime) {
       game->processEvents(dt);
       dt = 0;
