@@ -9,7 +9,7 @@ namespace TShapes {
     static const int rectSize = 30;
     static const float outlineThick = 0.7;
     static const int numTypes = 7;
-    static sf::Vector2i start{ 5,2 };
+    static sf::Vector2i start{ 8,2 };
     static const std::vector<sf::Color> shapeColors {
             sf::Color(153,0,153),  //purple
             sf::Color(204,255,51), //yellow
@@ -32,7 +32,6 @@ class TShape final{
 public:
     TShape(int type, const sf::Vector2i& iMaxPoint = TShapes::start);
     const sf::Color& getRandColor();
-
     void move(const sf::Vector2i& iMotion);
     void rotate();
     void init();
@@ -48,9 +47,12 @@ public:
     std::vector<std::pair<int,int>> indices;
     bool rotating = false;
     bool moving = false;
+    bool alive = true;
     sf::Color color;
 };
 class TField final : public GObj {
+    //TODO : No need array of shapes
+    //TODO: replace checks and generation
     public:
         TField(int iWinWidth, int iWinHeight);
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
@@ -58,14 +60,16 @@ class TField final : public GObj {
         void revertLastEvent() override;
         ~TField() final;
     private:
+        const sf::Color backgroundColor = sf::Color::Black;
         void genRandTShape();
-        //TODO: add additional parameter - real activeShape before all events to deduct what's happen
-        bool checkShape(const TShape& iShape);
+        bool checkShape(TShape& iShape);
         void markRect(short i, short j, sf::Color const& iColor = sf::Color::White);
         int getMark(short i, short j);
-        int fieldWidth = 15;
+        int fieldWidth = 16;
         int fieldHeight ;
         std::vector<std::vector<sf::RectangleShape>> grid;
-        std::vector<TShape> shapes;
+        std::unique_ptr<TShape> activeShape;
         const float motionTime = 0.1;
+
+
     };

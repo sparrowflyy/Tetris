@@ -135,25 +135,31 @@ void TShape::rotate() {
 }
 TField::TField(int iWinWidth, int iWinHeight)
 {
-  float rectSize = (iWinWidth*0.9)/fieldWidth;
-  fieldHeight = int(iWinHeight*0.9/rectSize);
+  int bufferSize = 3;
+  float rectSize = (iWinWidth)/fieldWidth;
+  fieldHeight = int(iWinHeight/rectSize) + bufferSize;
   grid.resize(fieldWidth);
+
 	for (int i = 0; i < fieldWidth; i ++) {
     grid[i].resize(fieldHeight);
 		for (int j = 0; j < fieldHeight; j ++) {
-      //TODO: need new?
 			auto* cell = new sf::RectangleShape(sf::Vector2f(rectSize,rectSize));
-			cell->setPosition( i * rectSize + iWinWidth*0.05 , j * rectSize + iWinHeight*0.05);
+      if (j <= bufferSize){
+        cell->setFillColor(backgroundColor);
+        grid[i][j] = (*cell);
+        continue;
+      }
+			cell->setPosition( i * rectSize, (j - bufferSize) * rectSize);
 			cell->setFillColor(sf::Color::White);
 			cell->setOutlineThickness(-TShapes::outlineThick);
 			cell->setOutlineColor(sf::Color::Black);
-			grid[i][j] = (*cell);
+      grid[i][j] = (*cell);
 		}
 	}
     genRandTShape();
 }
 void TField::genRandTShape() {
-    //TODO: new?
+    //TODO: new
     TShape * rndShape = new TShape(GUtils::genRandomInt(0, TShapes::numTypes - 1));
     for (auto& [x,y] : rndShape->indices) {
         markRect(x,y,rndShape->color);
@@ -163,10 +169,8 @@ void TField::genRandTShape() {
 
 void TField::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 	for (const auto& row: grid) {
-    std::for_each(row.begin(),row.end(),[&](const sf::RectangleShape& rect){target.draw(rect);});
-/*    for (const auto& cell: row)
-		  target.draw(cell);*/
-	}
+    std::for_each(row.begin(), row.end(), [&](const sf::RectangleShape &rect) { target.draw(rect); });
+  }
 }
 
 void TField::markRect(short i, short j, const sf::Color &iColor) {
@@ -174,27 +178,47 @@ void TField::markRect(short i, short j, const sf::Color &iColor) {
 }
 
 int TField::getMark(short i, short j) {
-    sf::Color rectColor = grid[i][j].getFillColor();
-    if (rectColor != sf::Color::Transparent){
-        return Cell::Shape;
+    if (i < 0 || i >= fieldWidth || j < 0 || j >=fieldHeight ) {
+      return Cell::Empty;
     }
-    return Cell::Empty;
+    sf::Color rectColor = grid[i][j].getFillColor();
+    auto found = std::find(TShapes::shapeColors.begin(), TShapes::shapeColors.end(), rectColor);
+    if (found == TShapes::shapeColors.end()){
+        return Cell::Empty;
+    }
+    return Cell::Shape;
 }
 
-bool TField::checkShape(const TShape &iShape) {
-  for (const auto& [x,y] : iShape.indices){
+bool TField::checkShape(TShape &iShape) {
+  auto& activeShape = *shapes.rbegin();
+  for (int i = 0; i < iShape.indices.size(); i++) {
+    int x = iShape.indices[i].first;
+    int y = iShape.indices[i].second;
     if (x < 0 || x > fieldWidth - 1)
       return false;
-    if (y < 0 || y > fieldHeight - 1){
+    if (y > fieldHeight - 1) {
+      activeShape.alive = false;
       return false;
     }
+    if (getMark(x,y) == Cell::Shape) {
+      if (activeShape.indices[i].second < y) {
+        activeShape.alive = false;
+      }
+      return false;
+    }
+
+
   }
   return true;
 }
 void TField::processEvent(float iTime, int iEventIdx) {
   static float elapsedTime = 0.0;
   elapsedTime+=iTime;
+  TShape& activeShape = *shapes.rbegin();
   TShape activeShapeCopy = *shapes.rbegin();
+  for (auto& [x,y]:activeShape.indices){
+    markRect(x,y);
+  }
   const GEvent* event = events[iEventIdx];
   if (event->type == GEvent::EventType::MotionStart) {
     auto* motionEvent = (GEventMotion<int>*)event;
@@ -210,15 +234,16 @@ void TField::processEvent(float iTime, int iEventIdx) {
     activeShapeCopy.rotating = false;
   }
   if (checkShape(activeShapeCopy)){
-    TShape& activeShape = *shapes.rbegin();
-    for (auto& [x,y]:activeShape.indices){
-      markRect(x,y);
-    }
     activeShape = activeShapeCopy;
-    for (auto& [x,y]:activeShape.indices){
-      markRect(x,y,activeShape.color);
-    }
   }
+  for (auto& [x,y]:activeShape.indices){
+    markRect(x,y,activeShape.color);
+  }
+
+  if (activeShape.alive == false) {
+    genRandTShape();
+  }
+
 }
 
 void TField::revertLastEvent() {
