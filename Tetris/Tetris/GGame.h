@@ -15,6 +15,7 @@ public:
 	float frameTime;
 	int winWidth;
 	int winHeight;
+  //TODO: shared ptr
   std::vector<GObj*> objects;
   std::vector<GEvent*> eventsPool;
   friend class GLoop;

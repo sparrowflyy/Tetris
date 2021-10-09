@@ -23,6 +23,7 @@ void GLoop::loop() {
       dt = 0;
 		  clock.restart();
     }
+    game->postProcess();
     for (auto* obj : game->objects) {
       obj->draw(window, sf::RenderStates::Default);
     }

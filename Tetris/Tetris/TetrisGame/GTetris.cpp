@@ -3,12 +3,14 @@
 #include <iostream>
 #include "TField.h"
 #include "../GUtils.h"
-
+#include "TBackground.h"
 GTetris::GTetris(int iWinWidth, int iWinHeight, float iFrameTime) {
 	winWidth = iWinWidth;
 	winHeight = iWinHeight;
 	frameTime = iFrameTime;
   init();
+  auto* background = new TBackground(iWinWidth,iWinHeight,{"/home/nik/c++/Tetris/Tetris/Tetris/TetrisGame/Data/back.png"});
+  objects.push_back(background);
 	auto* field = new TField(iWinWidth, iWinHeight);
 	objects.push_back(field);
 }
@@ -29,29 +31,29 @@ void GTetris::processKeys(const sf::Event& event, float iTime) {
   elapsedTime += iTime;
   if (elapsedTime > motionTime) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-      objects[0]->addEvent(eventsPool[Events::MoveLeft]);
+      objects[fieldIdx]->addEvent(eventsPool[Events::MoveLeft]);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-      objects[0]->addEvent(eventsPool[Events::MoveRight]);
+      objects[fieldIdx]->addEvent(eventsPool[Events::MoveRight]);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-      objects[0]->addEvent(eventsPool[Events::MoveDown]);
+      objects[fieldIdx]->addEvent(eventsPool[Events::MoveDown]);
     }
     elapsedTime = 0.0;
   }
 	if (event.type == sf::Event::KeyReleased) {
 		if (event.key.code == sf::Keyboard::W) {
-			objects[0]->addEvent(eventsPool[Events::RotateEnd]);
+			objects[fieldIdx]->addEvent(eventsPool[Events::RotateEnd]);
 		}
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-		objects[0]->addEvent(eventsPool[Events::RotateStart]);
+		objects[fieldIdx]->addEvent(eventsPool[Events::RotateStart]);
 	}
 }
 void GTetris::processEvents(float iTime) {
 	elapsedTime += iTime;
 	if (elapsedTime > fallTime) {
-		objects[0]->addEvent(eventsPool[Events::MoveDown]);
+		objects[fieldIdx]->addEvent(eventsPool[Events::MoveDown]);
 		elapsedTime = 0.0;
 	}
   for (auto & obj : objects) {
@@ -62,6 +64,11 @@ void GTetris::processEvents(float iTime) {
   }
 }
 void GTetris::postProcess() {
+  TField* field = (TField*)objects[fieldIdx];
+  if (!field->activeShape->alive) {
+    field->checkField();
+    field->genRandTShape();
+  }
 }
 
 GTetris::~GTetris() noexcept {

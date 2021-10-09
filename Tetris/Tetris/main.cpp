@@ -5,7 +5,7 @@
 
 
 
-int main()
+int main(int argnum, char* argc[], char*argv[] )
 {
   GTetris* game = new GTetris();
   GLoop gLoop(game);
