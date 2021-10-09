@@ -1,40 +1,29 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "GEvent.h"
-class GObj
+#include <memory>
+
+class GObj :public sf::Drawable, public sf::Transformable
 {
 public:
-	GObj(int iParts = 1) : parts(iParts) {}
-	GObj(const std::string& iPath) : parts(1) {
-		addTexture(iPath);
-	}
-	GObj(const std::vector<std::string>& iPaths) : parts(1) {
-		for (auto path : iPaths) {
-			addTexture(path);
-		}
-	};
-	void addTexture(const std::string& iPath)
-	{
-		m_textures.push_back(std::make_shared<sf::Texture>(sf::Texture()));
-		m_textures.back()->loadFromFile(iPath.c_str());
-		m_sprites.push_back(std::make_shared<sf::Sprite>(sf::Sprite()));
-		m_sprites.back()->setTexture(*m_textures.back());
-	}
-
-	virtual const sf::Drawable* getDrawable(int idx) const { return nullptr; }
-	void addEvent(const GEvent& iEvent) { m_events.push_back(iEvent); }
-	virtual void update(float iTime) {}
-	
+	void draw(sf::RenderTarget& target, sf::RenderStates states) const override {};
+	void addEvent(const GEvent* iEvent) { events.push_back(iEvent); }
+	virtual void processEvent(float iTime, int iEventIdx) = 0;
+	virtual void revertLastEvent() = 0;
+    virtual sf::FloatRect getExtents() const {return  {};} ;
 	virtual ~GObj() {
-		m_textures.clear();
-		m_sprites.clear();
+		textures.clear();
+		sprites.clear();
+		events.clear();
 	};
 
 	//index of sprite to draw
 	int curIdx = 0;
-	int parts;
-	std::vector<std::shared_ptr<sf::Texture>> m_textures {};
-	std::vector<std::shared_ptr<sf::Sprite>> m_sprites {};
-	std::vector<GEvent> m_events {};
+	int eventIdx = 0;
+
+	std::vector<std::shared_ptr<sf::Texture>> textures {};
+	std::vector<std::shared_ptr<sf::Sprite>> sprites {};
+  //TODO: shared ptr
+	std::vector<const GEvent *> events;
 	
 };

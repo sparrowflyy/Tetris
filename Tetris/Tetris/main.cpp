@@ -1,27 +1,14 @@
+#include <iostream>
 #include <SFML/Graphics.hpp>
 #include "GLoop.h"
-int WinMain()
+#include "TetrisGame/GTetris.h"
+
+
+
+int main(int argnum, char* argc[], char*argv[] )
 {
-	
-  GLoop gLoop;
+  GTetris* game = new GTetris();
+  GLoop gLoop(game);
   gLoop.loop();
-  //sf::RenderWindow window(sf::VideoMode(500, 650), "SFML works!");
-  //sf::CircleShape shape(100.f);
-  //shape.setFillColor(sf::Color::Green);
- 
-  //while (window.isOpen())
-  //{
-  //  sf::Event event;
-  //  while (window.pollEvent(event))
-  //  {
-  //    if (event.type == sf::Event::Closed)
-  //      window.close();
-  //  }
-
-  //  window.clear();
-  //  window.draw(shape);
-  //  window.display();
-  //}
-
   return 0;
 }

@@ -1,24 +1,32 @@
 #include "GLoop.h"
-#include "TetrisGame/TShape.h"
+
 
 void GLoop::loop() {
-
-  TShape line(Tetris::ShapeType::T);
+  sf::RenderWindow window(sf::VideoMode(game->winWidth, game->winHeight), "Tetris");
+  game->init();
   sf::Clock clock;
-  m_obj.push_back(std::make_shared<TShape>(line));
-  while (gWin.win->isOpen())
+  float dt = 0;
+  while (window.isOpen())
   {
     sf::Event event;
-    while (gWin.win->pollEvent(event))
+    while (window.pollEvent(event))
     {
       if (event.type == sf::Event::Closed)
-        gWin.win->close();
+        window.close();
     }
-
-		gWin.win->clear();
-    for (int i = 0; i < m_obj.size(); i++) {
-        gWin.draw(*m_obj[i]);
+    sf::Time elapsedTime = clock.getElapsedTime();
+    dt += elapsedTime.asSeconds();
+    window.clear();
+    game->processKeys(event,dt);
+    if (dt >= game->frameTime) {
+      game->processEvents(dt);
+      dt = 0;
+		  clock.restart();
     }
-    gWin.win->display();
+    game->postProcess();
+    for (auto* obj : game->objects) {
+      obj->draw(window, sf::RenderStates::Default);
+    }
+    window.display();
   }
 }

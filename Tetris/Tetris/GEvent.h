@@ -6,24 +6,26 @@ public:
 	enum EventType
 	{
 		NullEvent,
-		Motion,
+		MotionStart,
+    MotionEnd,
 		Intersection,
-		Force
+		Force,
+		RotationStart,
+		RotationEnd
 	};
-	GEvent(int iType = EventType::NullEvent) : type(iType) {}
-	
+	explicit GEvent(int iType = EventType::NullEvent) : type(iType) {}
 	int type;
-	virtual ~GEvent() {}
+  ~GEvent() = default;
 };
 
+
+template <typename T>
 class GEventMotion: public GEvent
 {
 public:
-	GEventMotion(const sf::Vector2i& iMotion, float iRotAng = 0.0) : GEvent(EventType::Motion), motion(iMotion), angle(iRotAng) {}
-	const sf::Vector2i& getMotion() const { return motion; }
-	float getAngle() const { return angle; }
-  ~GEventMotion() {}
+	explicit GEventMotion(const sf::Vector2<T>& iMotion) : GEvent(EventType::MotionStart), motion(iMotion) {}
+	const sf::Vector2<T>& getMotion() const { return motion; }
+    ~GEventMotion() = default;
 private:
-	sf::Vector2i motion;
-	float angle;
+	sf::Vector2<T> motion;
 };
