@@ -5,15 +5,16 @@ class GEvent
 public:
 	enum EventType
 	{
-		NullEvent,
+		DefaultEvent,
 		MotionStart,
     MotionEnd,
 		Intersection,
 		Force,
 		RotationStart,
-		RotationEnd
+		RotationEnd,
+    TextUpdate
 	};
-	explicit GEvent(int iType = EventType::NullEvent) : type(iType) {}
+	explicit GEvent(int iType = EventType::DefaultEvent) : type(iType) {}
 	int type;
   ~GEvent() = default;
 };
@@ -28,4 +29,12 @@ public:
     ~GEventMotion() = default;
 private:
 	sf::Vector2<T> motion;
+};
+
+class GEventTextUpdate : public GEvent {
+public:
+    GEventTextUpdate(const std::string& iString) : GEvent(GEvent::EventType::TextUpdate),string(iString){};
+    ~GEventTextUpdate()  = default;
+    void setString(const std::string& iString) {string = iString;};
+    std::string string;
 };

@@ -236,10 +236,6 @@ void TField::processEvent(float iTime, int iEventIdx) {
   for (auto& [x,y]:activeShape->indices){
     markRect(x,y,activeShape->color);
   }
-/*  if (!activeShape->alive) {
-    genRandTShape();
-  }*/
-
 }
 
 void TField::copyRowColors(int iRow, int iDestRow) {
@@ -271,6 +267,7 @@ void TField::checkField() {
   int start = *rowsToRemove.begin();
   int end = *rowsToRemove.rbegin();
   int length = end - start;
+  score+=(1+length)*100;
   for (int i = start - 1; i > 0; i-- ) {
     copyRowColors(i,i+length+1);
     copyRowColors(0,i);

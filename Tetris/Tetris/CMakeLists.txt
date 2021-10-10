@@ -15,7 +15,7 @@ set(PROJECT_HEADERS
         GObj.h
         GObjIntersector.h
         GUtils.h
-        TetrisGame/TBackground.h)
+        TetrisGame/TBackground.h TetrisGame/TWidgetScore.h)
 set(PROJECT_SOURCES
         TetrisGame/TField.cpp
         TetrisGame/GTetris.cpp
@@ -23,8 +23,8 @@ set(PROJECT_SOURCES
         GObj.cpp
         GLoop.cpp
         GObjIntersector.cpp
-        TetrisGame/TBackground.cpp)
+        TetrisGame/TBackground.cpp TetrisGame/TWidgetScore.cpp)
 
-add_executable(Tetris main.cpp ${PROJECT_SOURCES} ${PROJECT_HEADERS} TetrisGame/TBackground.h TetrisGame/TBackground.cpp)
+add_executable(Tetris main.cpp ${PROJECT_SOURCES} ${PROJECT_HEADERS} TetrisGame/TBackground.h TetrisGame/TBackground.cpp TetrisGame/TWidgetScore.h TetrisGame/TWidgetScore.cpp)
 target_link_libraries(Tetris sfml-graphics sfml-audio)
 

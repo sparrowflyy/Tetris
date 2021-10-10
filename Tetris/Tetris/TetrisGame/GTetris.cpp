@@ -4,19 +4,22 @@
 #include "TField.h"
 #include "../GUtils.h"
 #include "TBackground.h"
+#include "TWidgetScore.h"
 GTetris::GTetris(int iWinWidth, int iWinHeight, float iFrameTime) {
 	winWidth = iWinWidth;
 	winHeight = iWinHeight;
 	frameTime = iFrameTime;
   init();
-  auto* background = new TBackground(iWinWidth,iWinHeight,{"/home/nik/c++/Tetris/Tetris/Tetris/TetrisGame/Data/back.png"});
+  auto* background = new TBackground(winWidth - widgetSize,winHeight,{"/home/nik/c++/Tetris/Tetris/Tetris/TetrisGame/Data/back.png"});
   objects.push_back(background);
-	auto* field = new TField(iWinWidth, iWinHeight);
+	auto* field = new TField(winWidth - widgetSize, iWinHeight);
 	objects.push_back(field);
+  auto* widget = new TWidgetScore(winWidth - widgetSize,0,widgetSize,winHeight);
+  objects.push_back(widget);
 }
 
 void GTetris::init() {
-  eventsPool.resize(7);
+  eventsPool.resize(8);
   eventsPool[Events::MoveLeft] = new GEventMotion(Tetris::left);
   eventsPool[Events::MoveRight] = new GEventMotion(Tetris::right);
   eventsPool[Events::MoveDown] = new GEventMotion(Tetris::down);
@@ -24,6 +27,7 @@ void GTetris::init() {
   eventsPool[Events::MoveDown] = new GEventMotion(Tetris::down);
   eventsPool[Events::RotateStart] = new TRotationEventStart();
   eventsPool[Events::RotateEnd] = new TRotationEventEnd();
+  eventsPool[Events::ScoreUpdate] = new GEventTextUpdate("0");
 }
 
 void GTetris::processKeys(const sf::Event& event, float iTime) {
@@ -31,29 +35,29 @@ void GTetris::processKeys(const sf::Event& event, float iTime) {
   elapsedTime += iTime;
   if (elapsedTime > motionTime) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-      objects[fieldIdx]->addEvent(eventsPool[Events::MoveLeft]);
+      objects[Objects::Field]->addEvent(eventsPool[Events::MoveLeft]);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-      objects[fieldIdx]->addEvent(eventsPool[Events::MoveRight]);
+      objects[Objects::Field]->addEvent(eventsPool[Events::MoveRight]);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-      objects[fieldIdx]->addEvent(eventsPool[Events::MoveDown]);
+      objects[Objects::Field]->addEvent(eventsPool[Events::MoveDown]);
     }
     elapsedTime = 0.0;
   }
 	if (event.type == sf::Event::KeyReleased) {
 		if (event.key.code == sf::Keyboard::W) {
-			objects[fieldIdx]->addEvent(eventsPool[Events::RotateEnd]);
+			objects[Objects::Field]->addEvent(eventsPool[Events::RotateEnd]);
 		}
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-		objects[fieldIdx]->addEvent(eventsPool[Events::RotateStart]);
+		objects[Objects::Field]->addEvent(eventsPool[Events::RotateStart]);
 	}
 }
 void GTetris::processEvents(float iTime) {
 	elapsedTime += iTime;
 	if (elapsedTime > fallTime) {
-		objects[fieldIdx]->addEvent(eventsPool[Events::MoveDown]);
+		objects[Objects::Field]->addEvent(eventsPool[Events::MoveDown]);
 		elapsedTime = 0.0;
 	}
   for (auto & obj : objects) {
@@ -64,11 +68,14 @@ void GTetris::processEvents(float iTime) {
   }
 }
 void GTetris::postProcess() {
-  TField* field = (TField*)objects[fieldIdx];
+  TField* field = (TField*)objects[Objects::Field];
   if (!field->activeShape->alive) {
     field->checkField();
     field->genRandTShape();
   }
+  static_cast<GEventTextUpdate*>(eventsPool[Events::ScoreUpdate])->setString(std::to_string(field->score));
+  objects[Objects::Widget]->addEvent(eventsPool[Events::ScoreUpdate]);
+
 }
 
 GTetris::~GTetris() noexcept {
