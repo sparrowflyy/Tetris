@@ -16,7 +16,7 @@ public:
 	int winWidth;
 	int winHeight;
   //TODO: shared ptr
-  std::vector<GObj*> objects;
-  std::vector<GEvent*> eventsPool;
+  std::vector<std::shared_ptr<GObj>> objects;
+  std::vector<std::shared_ptr<GEvent>> eventsPool;
   friend class GLoop;
 };

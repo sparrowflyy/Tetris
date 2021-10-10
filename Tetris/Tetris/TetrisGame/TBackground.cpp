@@ -22,7 +22,7 @@ TBackground::TBackground(int iWinWidth, int iWinHeight, const std::vector<std::s
 
 void TBackground::draw(sf::RenderTarget &target, sf::RenderStates states) const {
   for (const auto& back: sprites)
-    target.draw(*back.get());
+    target.draw(*back);
 }
 
 void TBackground::processEvent(float iTime, int iEventIdx) {

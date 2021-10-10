@@ -70,6 +70,6 @@ private:
     const int bufferSize = 5;
     int fieldWidth = 16; //16
     int fieldHeight ;
-    std::vector<std::vector<sf::RectangleShape>> grid;
+    std::vector<std::vector<std::shared_ptr<sf::RectangleShape>>> grid;
     const float motionTime = 0.07;
 };

@@ -7,7 +7,7 @@ class GObj :public sf::Drawable, public sf::Transformable
 {
 public:
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override {};
-	void addEvent(const GEvent* iEvent) { events.push_back(iEvent); }
+	void addEvent(std::shared_ptr<GEvent> iEvent) { events.push_back(iEvent); }
 	virtual void processEvent(float iTime, int iEventIdx) = 0;
 	virtual void revertLastEvent() = 0;
     virtual sf::FloatRect getExtents() const {return  {};} ;
@@ -24,6 +24,6 @@ public:
 	std::vector<std::shared_ptr<sf::Texture>> textures {};
 	std::vector<std::shared_ptr<sf::Sprite>> sprites {};
   //TODO: shared ptr
-	std::vector<const GEvent *> events;
+	std::vector<std::shared_ptr<GEvent>> events;
 	
 };

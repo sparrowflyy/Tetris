@@ -1,33 +1,35 @@
 #include "GTetris.h"
-#
+#include <memory>
 #include <iostream>
 #include "TField.h"
 #include "../GUtils.h"
 #include "TBackground.h"
 #include "TWidgetScore.h"
+
 GTetris::GTetris(int iWinWidth, int iWinHeight, float iFrameTime) {
 	winWidth = iWinWidth;
 	winHeight = iWinHeight;
 	frameTime = iFrameTime;
   init();
-  auto* background = new TBackground(winWidth - widgetSize,winHeight,{"/home/nik/c++/Tetris/Tetris/Tetris/TetrisGame/Data/back.png"});
+  std::vector<std::string> filenames = {"/home/nik/c++/Tetris/Tetris/Tetris/TetrisGame/Data/back.png"};
+  auto background = std::make_shared<TBackground>(winWidth - widgetSize,winHeight, filenames);
   objects.push_back(background);
-	auto* field = new TField(winWidth - widgetSize, iWinHeight);
+	auto field = std::make_shared<TField>(winWidth - widgetSize, iWinHeight);
 	objects.push_back(field);
-  auto* widget = new TWidgetScore(winWidth - widgetSize,0,widgetSize,winHeight);
+  auto widget = std::make_shared<TWidgetScore>(winWidth - widgetSize,0,widgetSize,winHeight);
   objects.push_back(widget);
 }
 
 void GTetris::init() {
-  eventsPool.resize(8);
-  eventsPool[Events::MoveLeft] = new GEventMotion(Tetris::left);
-  eventsPool[Events::MoveRight] = new GEventMotion(Tetris::right);
-  eventsPool[Events::MoveDown] = new GEventMotion(Tetris::down);
-  eventsPool[Events::MoveEnd] = new GEvent(GEvent::EventType::MotionEnd);
-  eventsPool[Events::MoveDown] = new GEventMotion(Tetris::down);
-  eventsPool[Events::RotateStart] = new TRotationEventStart();
-  eventsPool[Events::RotateEnd] = new TRotationEventEnd();
-  eventsPool[Events::ScoreUpdate] = new GEventTextUpdate("0");
+  eventsPool.resize(7);
+
+  eventsPool[Events::MoveLeft] = std::make_shared<GEventMotion<int>>(Tetris::left);
+  eventsPool[Events::MoveRight] = std::make_shared<GEventMotion<int>>(Tetris::right);
+  eventsPool[Events::MoveDown] = std::make_shared<GEventMotion<int>>(Tetris::down);
+  eventsPool[Events::MoveEnd] = std::make_shared<GEvent>(GEvent::EventType::MotionEnd);
+  eventsPool[Events::RotateStart] = std::make_shared<TRotationEventStart>();
+  eventsPool[Events::RotateEnd] = std::make_shared<TRotationEventEnd>();
+  eventsPool[Events::ScoreUpdate] = std::make_shared<GEventText>("0");
 }
 
 void GTetris::processKeys(const sf::Event& event, float iTime) {
@@ -68,22 +70,16 @@ void GTetris::processEvents(float iTime) {
   }
 }
 void GTetris::postProcess() {
-  TField* field = (TField*)objects[Objects::Field];
+  std::shared_ptr<TField> field = std::static_pointer_cast<TField>(objects[Objects::Field]);
   if (!field->activeShape->alive) {
     field->checkField();
     field->genRandTShape();
   }
-  static_cast<GEventTextUpdate*>(eventsPool[Events::ScoreUpdate])->setString(std::to_string(field->score));
+  std::static_pointer_cast<GEventText>(eventsPool[Events::ScoreUpdate])->setString(std::to_string(field->score));
   objects[Objects::Widget]->addEvent(eventsPool[Events::ScoreUpdate]);
 
 }
 
 GTetris::~GTetris() noexcept {
-    for (auto * event : eventsPool){
-        delete event;
-    }
-    for (auto * obj : objects){
-        delete obj;
-    }
 
 }
