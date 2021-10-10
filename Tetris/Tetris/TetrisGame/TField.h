@@ -8,7 +8,7 @@ enum Cell{
 namespace TShapes {
     static const float outlineThick = 0.7;
     static const int numTypes = 7;
-    static sf::Vector2i start{ 7,2 };
+    static sf::Vector2i start{ 8,2 };
     static const std::vector<sf::Color> shapeColors {
       sf::Color(255,30,30),  //purple
       sf::Color(204,255,51), //yellow
@@ -60,6 +60,7 @@ public:
     void checkField();
     void genRandTShape();
     std::unique_ptr<TShape> activeShape;
+    int score = 0;
 private:
     const sf::Color backgroundColor = sf::Color::Transparent;
     void copyRowColors(int iRow, int iDestRow);
