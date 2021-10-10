@@ -11,8 +11,10 @@ void GLoop::loop() {
     sf::Event event;
     while (window.pollEvent(event))
     {
-      if (event.type == sf::Event::Closed)
+      if (event.type == sf::Event::Closed) {
         window.close();
+        return;
+      }
     }
     sf::Time elapsedTime = clock.getElapsedTime();
     dt += elapsedTime.asSeconds();
@@ -24,7 +26,7 @@ void GLoop::loop() {
 		  clock.restart();
     }
     game->postProcess();
-    for (auto* obj : game->objects) {
+    for (auto& obj : game->objects) {
       obj->draw(window, sf::RenderStates::Default);
     }
     window.display();

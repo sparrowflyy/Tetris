@@ -142,18 +142,18 @@ TField::TField(int iWinWidth, int iWinHeight)
 	for (int i = 0; i < fieldWidth; i ++) {
     grid[i].resize(fieldHeight);
 		for (int j = 0; j < fieldHeight; j ++) {
-			auto* cell = new sf::RectangleShape(sf::Vector2f(rectSize,rectSize));
+			auto cell = std::make_shared<sf::RectangleShape>(sf::Vector2f(rectSize,rectSize));
 			cell->setPosition( i * rectSize, (j-bufferSize) * rectSize);
       cell->setFillColor(backgroundColor);
       if (j < bufferSize-1){
 
-        grid[i][j] = (*cell);
+        grid[i][j] = cell;
         continue;
       }
 
 			cell->setOutlineThickness(-TShapes::outlineThick);
 			cell->setOutlineColor(sf::Color::Black);
-      grid[i][j] = (*cell);
+      grid[i][j] = cell;
 
 		}
 	}
@@ -168,19 +168,19 @@ void TField::genRandTShape() {
 
 void TField::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 	for (const auto& row: grid) {
-    std::for_each(row.begin(), row.end(), [&](const sf::RectangleShape &rect) { target.draw(rect); });
+    std::for_each(row.begin(), row.end(), [&](const std::shared_ptr<sf::RectangleShape> rect) { target.draw(*rect); });
   }
 }
 
 void TField::markRect(short i, short j, const sf::Color &iColor) {
-    grid[i][j].setFillColor(iColor);
+    grid[i][j]->setFillColor(iColor);
 }
 
 int TField::getMark(short i, short j) {
     if (i < 0 || i >= fieldWidth || j < 0 || j >=fieldHeight ) {
       return Cell::Empty;
     }
-    sf::Color rectColor = grid[i][j].getFillColor();
+    sf::Color rectColor = grid[i][j]->getFillColor();
     auto found = std::find(TShapes::shapeColors.begin(), TShapes::shapeColors.end(), rectColor);
     if (found == TShapes::shapeColors.end()){
         return Cell::Empty;
@@ -216,9 +216,9 @@ void TField::processEvent(float iTime, int iEventIdx) {
   for (auto& [x,y]:activeShape->indices){
     markRect(x,y);
   }
-  const GEvent* event = events[iEventIdx];
+  std::shared_ptr<GEvent> event = events[iEventIdx];
   if (event->type == GEvent::EventType::MotionStart) {
-    auto* motionEvent = (GEventMotion<int>*)event;
+    std::shared_ptr<GEventMotion<int>> motionEvent = std::static_pointer_cast<GEventMotion<int>>(event);
     activeShapeCopy.move(motionEvent->getMotion());
   }
   if (event->type == GEvent::EventType::MotionEnd && activeShapeCopy.moving) {
@@ -240,7 +240,7 @@ void TField::processEvent(float iTime, int iEventIdx) {
 
 void TField::copyRowColors(int iRow, int iDestRow) {
   for (int i = 0; i < fieldWidth; i++) {
-    grid[i][iDestRow].setFillColor(grid[i][iRow].getFillColor());
+    grid[i][iDestRow]->setFillColor(grid[i][iRow]->getFillColor());
   }
 }
 void TField::checkField() {
@@ -267,7 +267,7 @@ void TField::checkField() {
   int start = *rowsToRemove.begin();
   int end = *rowsToRemove.rbegin();
   int length = end - start;
-  score+=(1+length)*100;
+  score+=(1+length*2)*100;
   for (int i = start - 1; i > 0; i-- ) {
     copyRowColors(i,i+length+1);
     copyRowColors(0,i);
@@ -289,5 +289,8 @@ void TField::revertLastEvent() {
 
 TField::~TField()
 {
+  for (auto& rows : grid){
+    rows.clear();
+  }
   grid.clear();
 }

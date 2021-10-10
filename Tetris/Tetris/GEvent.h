@@ -12,7 +12,7 @@ public:
 		Force,
 		RotationStart,
 		RotationEnd,
-    TextUpdate
+    Text
 	};
 	explicit GEvent(int iType = EventType::DefaultEvent) : type(iType) {}
 	int type;
@@ -31,10 +31,10 @@ private:
 	sf::Vector2<T> motion;
 };
 
-class GEventTextUpdate : public GEvent {
+class GEventText: public GEvent {
 public:
-    GEventTextUpdate(const std::string& iString) : GEvent(GEvent::EventType::TextUpdate),string(iString){};
-    ~GEventTextUpdate()  = default;
+    GEventText(const std::string& iString) : GEvent(GEvent::EventType::Text),string(iString){};
+    ~GEventText()  = default;
     void setString(const std::string& iString) {string = iString;};
     std::string string;
 };

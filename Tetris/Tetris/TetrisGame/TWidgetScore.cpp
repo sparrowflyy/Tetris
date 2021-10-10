@@ -6,6 +6,7 @@
 TWidgetScore::TWidgetScore(int iLeft, int iTop, int iWidth, int iHeight)
   : rect(iLeft,iTop,iWidth,iHeight)
 {
+  //TODO: ивенты просто с текстом что делать
   //TODO: exceptions
   font.loadFromFile(fontFilename);
   sf::Text gameName ("Tetris",font);
@@ -39,9 +40,9 @@ void TWidgetScore::draw(sf::RenderTarget &target, sf::RenderStates states) const
 }
 
 void TWidgetScore::processEvent(float iTime, int iEventIdx) {
-  const GEvent* event = events[iEventIdx];
-  if (event->type == GEvent::EventType::TextUpdate) {
-    GEventTextUpdate* textEvent = (GEventTextUpdate*)event;
+ std::shared_ptr<GEvent> event = events[iEventIdx];
+  if (event->type == GEvent::EventType::Text) {
+    std::shared_ptr<GEventText> textEvent = std::static_pointer_cast<GEventText>(event);
     texts.back().setString(textEvent->string);
     auto bound =  texts.back().getLocalBounds();
     texts.back().setPosition(rect.left + rect.width/2 - bound.width/2,rect.top + rect.height*0.6-bound.height);
