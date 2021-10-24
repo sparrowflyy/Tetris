@@ -3,9 +3,10 @@
 //
 #include "TWidgetScore.h"
 //TODO: Draw next shape
-TWidgetScore::TWidgetScore(int iLeft, int iTop, int iWidth, int iHeight)
+TWidgetScore::TWidgetScore(int iLeft, int iTop, int iWidth, int iHeight, float iRectSize)
   : rect(iLeft,iTop,iWidth,iHeight)
 {
+  rectSize = iRectSize;
   //TODO: ивенты просто с текстом что делать
   //TODO: exceptions
   font.loadFromFile(fontFilename);
@@ -29,13 +30,94 @@ TWidgetScore::TWidgetScore(int iLeft, int iTop, int iWidth, int iHeight)
   texts.push_back(gameName);
   texts.push_back(scoreName);
   texts.push_back(score);
-
+  squareFieldSize = 4;
+  float startX,startY;
+  startX = rect.left + rectSize;
+  startY = rect.top + rect.height * 0.2;
+  miniGrid.resize(squareFieldSize);
+  for (int i = 0; i < squareFieldSize; i ++) {
+    miniGrid[i].resize(squareFieldSize);
+    for (int j = 0; j < squareFieldSize; j ++) {
+      auto cell = std::make_shared<sf::RectangleShape>(sf::Vector2f(rectSize,rectSize));
+      cell->setFillColor(sf::Color::White);
+      cell->setPosition( startX + i * rectSize, startY + j * rectSize);
+      cell->setOutlineThickness(-TShapes::outlineThick);
+      cell->setOutlineColor(sf::Color::Black);
+      miniGrid[i][j] = cell;
+    }
+  }
 
 }
 
+void TWidgetScore::markNextShape() {
+  for (int i = 0; i < squareFieldSize; i++){
+    for (int j = 0; j < squareFieldSize; j++){
+      miniGrid[i][j]->setFillColor(sf::Color::Black);
+    }
+  }
+  int type = nextShape->type;
+  switch (type) {
+    case TShapes::Type::I: {
+      miniGrid[3][0]->setFillColor(nextShape->color);
+      miniGrid[3][1]->setFillColor(nextShape->color);
+      miniGrid[3][2]->setFillColor(nextShape->color);
+      miniGrid[3][3]->setFillColor(nextShape->color);
+      break;
+    }
+    case TShapes::Type::J: {
+      miniGrid[3][1]->setFillColor(nextShape->color);
+      miniGrid[3][2]->setFillColor(nextShape->color);
+      miniGrid[3][3]->setFillColor(nextShape->color);
+      miniGrid[2][3]->setFillColor(nextShape->color);
+      break;
+    }
+    case TShapes::Type::L: {
+      miniGrid[2][1]->setFillColor(nextShape->color);
+      miniGrid[2][2]->setFillColor(nextShape->color);
+      miniGrid[2][3]->setFillColor(nextShape->color);
+      miniGrid[3][3]->setFillColor(nextShape->color);
+      break;
+    }
+    case TShapes::Type::O: {
+      miniGrid[2][1]->setFillColor(nextShape->color);
+      miniGrid[2][2]->setFillColor(nextShape->color);
+      miniGrid[3][1]->setFillColor(nextShape->color);
+      miniGrid[3][2]->setFillColor(nextShape->color);
+      break;
+    }
+    case TShapes::Type::T: {
+      miniGrid[3][1]->setFillColor(nextShape->color);
+      miniGrid[3][2]->setFillColor(nextShape->color);
+      miniGrid[3][3]->setFillColor(nextShape->color);
+      miniGrid[2][2]->setFillColor(nextShape->color);
+      break;
+    }
+    case TShapes::Type::S: {
+      miniGrid[3][1]->setFillColor(nextShape->color);
+      miniGrid[3][2]->setFillColor(nextShape->color);
+      miniGrid[2][2]->setFillColor(nextShape->color);
+      miniGrid[2][3]->setFillColor(nextShape->color);
+      break;
+    }
+    case TShapes::Type::Z: {
+      miniGrid[2][1]->setFillColor(nextShape->color);
+      miniGrid[2][2]->setFillColor(nextShape->color);
+      miniGrid[3][2]->setFillColor(nextShape->color);
+      miniGrid[3][3]->setFillColor(nextShape->color);
+      break;
+    }
+  }
+}
+void TWidgetScore::setNextTShape(std::shared_ptr<TShape> iNextShape) {
+  nextShape = iNextShape;
+  markNextShape();
+}
 void TWidgetScore::draw(sf::RenderTarget &target, sf::RenderStates states) const {
   for (const auto& text: texts){
     target.draw(text);
+  }
+  for (const auto& row: miniGrid) {
+    std::for_each(row.begin(), row.end(), [&](const std::shared_ptr<sf::RectangleShape> rect) { target.draw(*rect); });
   }
 }
 

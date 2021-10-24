@@ -6,16 +6,22 @@
 #define TETRIS_TWIDGETSCORE_H
 
 #include "../GObj.h"
-
+#include "TField.h"
 
 class TWidgetScore: public GObj {
 public:
-    TWidgetScore(int iLeft, int iTop, int iWidth, int iHeight);
+    TWidgetScore(int iLeft, int iTop, int iWidth, int iHeight, float iRectSize);
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     void processEvent(float iTime, int iEventIdx) override;
     void revertLastEvent() override {};
+    void setNextTShape(std::shared_ptr<TShape> iNextShape);
     ~TWidgetScore() final = default;
 private:
+    void markNextShape();
+    float rectSize;
+    float squareFieldSize;
+    std::shared_ptr<TShape> nextShape;
+    std::vector<std::vector<std::shared_ptr<sf::RectangleShape>>> miniGrid;
     const int fontSize = 24;
     std::vector<sf::Text> texts;
     sf::IntRect rect;

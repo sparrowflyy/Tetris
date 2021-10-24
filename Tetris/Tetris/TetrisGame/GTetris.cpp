@@ -16,8 +16,10 @@ GTetris::GTetris(int iWinWidth, int iWinHeight, float iFrameTime) {
   objects.push_back(background);
 	auto field = std::make_shared<TField>(winWidth - widgetSize, iWinHeight);
 	objects.push_back(field);
-  auto widget = std::make_shared<TWidgetScore>(winWidth - widgetSize,0,widgetSize,winHeight);
+  auto widget = std::make_shared<TWidgetScore>(winWidth - widgetSize,0,widgetSize,winHeight,field->rectSize);
+  widget->setNextTShape(field->nextShape);
   objects.push_back(widget);
+
 }
 
 void GTetris::init() {
@@ -74,6 +76,8 @@ void GTetris::postProcess() {
   if (!field->activeShape->alive) {
     field->checkField();
     field->genRandTShape();
+    std::shared_ptr<TWidgetScore> widget = std::static_pointer_cast<TWidgetScore>(objects[Objects::Widget]);
+    widget->setNextTShape(field->nextShape);
   }
   std::static_pointer_cast<GEventText>(eventsPool[Events::ScoreUpdate])->setString(std::to_string(field->score));
   objects[Objects::Widget]->addEvent(eventsPool[Events::ScoreUpdate]);

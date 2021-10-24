@@ -136,7 +136,7 @@ void TShape::rotate() {
 }
 TField::TField(int iWinWidth, int iWinHeight)
 {
-  float rectSize = (iWinWidth)/fieldWidth;
+  rectSize = (iWinWidth)/fieldWidth;
   fieldHeight = int(iWinHeight/rectSize) + bufferSize;
   grid.resize(fieldWidth);
 	for (int i = 0; i < fieldWidth; i ++) {
@@ -157,13 +157,17 @@ TField::TField(int iWinWidth, int iWinHeight)
 
 		}
 	}
-    genRandTShape();
+  genRandTShape();
 }
 void TField::genRandTShape() {
-    activeShape = std::make_unique<TShape>(GUtils::genRandomInt(0, TShapes::numTypes - 1));
-    for (auto& [x,y] : activeShape->indices) {
-        markRect(x,y,activeShape->color);
-    }
+  if (nextShape == nullptr){
+    nextShape = std::make_shared<TShape>(GUtils::genRandomInt(0, TShapes::numTypes - 1));
+  }
+  activeShape = nextShape;
+  nextShape = std::make_shared<TShape>(GUtils::genRandomInt(0, TShapes::numTypes - 1));
+  for (auto& [x,y] : activeShape->indices) {
+    markRect(x,y,activeShape->color);
+  }
 }
 
 void TField::draw(sf::RenderTarget& target, sf::RenderStates states) const {
@@ -277,11 +281,6 @@ void TField::checkField() {
       markRect(i,j);
     }
   }
-/*  for (int j = bufferSize; j < bufferSize+length; j++) {
-    for (int i = 0; i < fieldWidth; i++) {
-      markRect(i,j);
-    }
-  }*/
 }
 void TField::revertLastEvent() {
 

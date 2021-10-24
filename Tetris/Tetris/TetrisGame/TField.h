@@ -59,8 +59,10 @@ public:
     ~TField() final;
     void checkField();
     void genRandTShape();
-    std::unique_ptr<TShape> activeShape;
+    std::shared_ptr<TShape> nextShape;
+    std::shared_ptr<TShape> activeShape;
     int score = 0;
+    float rectSize;
 private:
     const sf::Color backgroundColor = sf::Color::Transparent;
     void copyRowColors(int iRow, int iDestRow);
@@ -69,7 +71,8 @@ private:
     int getMark(short i, short j);
     const int bufferSize = 5;
     int fieldWidth = 16; //16
-    int fieldHeight ;
+    int fieldHeight;
+
     std::vector<std::vector<std::shared_ptr<sf::RectangleShape>>> grid;
     const float motionTime = 0.07;
 };
