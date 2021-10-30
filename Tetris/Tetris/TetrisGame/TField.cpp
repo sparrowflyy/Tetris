@@ -146,7 +146,6 @@ TField::TField(int iWinWidth, int iWinHeight)
 			cell->setPosition( i * rectSize, (j-bufferSize) * rectSize);
       cell->setFillColor(backgroundColor);
       if (j < bufferSize-1){
-
         grid[i][j] = cell;
         continue;
       }
@@ -208,10 +207,17 @@ bool TField::checkShape(TShape &iShape) {
       }
       return false;
     }
-
-
   }
   return true;
+}
+
+bool TField::isGameOver() {
+  for (auto& [x,y]:activeShape->indices){
+    if (y < bufferSize){
+      return true;
+    }
+  }
+  return false;
 }
 void TField::processEvent(float iTime, int iEventIdx) {
   static float elapsedTime = 0.0;
@@ -258,10 +264,6 @@ void TField::checkField() {
       ++filledCells;
     }
     if (filledCells == fieldWidth) {
-      if (j == 0) {
-        //TODO:: GAME OVER!
-        return;
-      }
       rowsToRemove.push_back(j);
     }
   }
@@ -271,7 +273,9 @@ void TField::checkField() {
   int start = *rowsToRemove.begin();
   int end = *rowsToRemove.rbegin();
   int length = end - start;
-  score+=(1+length*2)*100;
+  int scoreAdd = (1+length*2)*100;
+
+  score+=scoreAdd;
   for (int i = start - 1; i > 0; i-- ) {
     copyRowColors(i,i+length+1);
     copyRowColors(0,i);

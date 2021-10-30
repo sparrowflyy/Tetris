@@ -74,14 +74,18 @@ void GTetris::processEvents(float iTime) {
 void GTetris::postProcess() {
   std::shared_ptr<TField> field = std::static_pointer_cast<TField>(objects[Objects::Field]);
   if (!field->activeShape->alive) {
+    bool gameOver = field->isGameOver();
+    if (gameOver){
+      printf("Game over!\n");
+    }
     field->checkField();
     field->genRandTShape();
     std::shared_ptr<TWidgetScore> widget = std::static_pointer_cast<TWidgetScore>(objects[Objects::Widget]);
     widget->setNextTShape(field->nextShape);
+   //TODO: decrease fallTime and motionTime if score reach another 1000
   }
   std::static_pointer_cast<GEventText>(eventsPool[Events::ScoreUpdate])->setString(std::to_string(field->score));
   objects[Objects::Widget]->addEvent(eventsPool[Events::ScoreUpdate]);
-
 }
 
 GTetris::~GTetris() noexcept {
