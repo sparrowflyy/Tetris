@@ -2,21 +2,29 @@
 // Created by nik on 10.10.2021.
 //
 
-#ifndef TETRIS_TWIDGETSCORE_H
-#define TETRIS_TWIDGETSCORE_H
+#ifndef TETRIS_TWIDGET_H
+#define TETRIS_TWIDGET_H
 
 #include "../GObj.h"
 #include "TField.h"
 
-class TWidgetScore: public GObj {
+class TWidget: public GObj {
 public:
-    TWidgetScore(int iLeft, int iTop, int iWidth, int iHeight, float iRectSize);
+    TWidget(int iLeft, int iTop, int iWidth, int iHeight, float iRectSize);
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-    void processEvent(float iTime, int iEventIdx) override;
-    void revertLastEvent() override {};
+    void processEvent(float iTime, int iEventIdx) override;;
     void setNextTShape(std::shared_ptr<TShape> iNextShape);
-    ~TWidgetScore() final = default;
+    ~TWidget() final = default;
 private:
+    enum Text{
+        GameName,
+        ScoreName,
+        Score,
+        GameOver,
+        Start,
+        TryAgain
+    };
+    void initMiniGrid();
     void markNextShape();
     float rectSize;
     float squareFieldSize;
@@ -31,4 +39,4 @@ private:
 };
 
 
-#endif //TETRIS_TWIDGETSCORE_H
+#endif //TETRIS_TWIDGET_H

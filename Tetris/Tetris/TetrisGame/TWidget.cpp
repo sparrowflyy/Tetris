@@ -1,14 +1,31 @@
 //
 // Created by nik on 10.10.2021.
 //
-#include "TWidgetScore.h"
-//TODO: Draw next shape
-TWidgetScore::TWidgetScore(int iLeft, int iTop, int iWidth, int iHeight, float iRectSize)
+#include "TWidget.h"
+
+void TWidget::initMiniGrid() {
+  squareFieldSize = 4;
+  float startX,startY;
+  startX = rect.left + rectSize;
+  startY = rect.top + rect.height * 0.2;
+  miniGrid.resize(squareFieldSize);
+  for (int i = 0; i < squareFieldSize; i ++) {
+    miniGrid[i].resize(squareFieldSize);
+    for (int j = 0; j < squareFieldSize; j ++) {
+      auto cell = std::make_shared<sf::RectangleShape>(sf::Vector2f(rectSize,rectSize));
+      cell->setFillColor(sf::Color::White);
+      cell->setPosition( startX + i * rectSize, startY + j * rectSize);
+      cell->setOutlineThickness(-TShapes::outlineThick);
+      cell->setOutlineColor(sf::Color::Black);
+      miniGrid[i][j] = cell;
+    }
+  }
+}
+TWidget::TWidget(int iLeft, int iTop, int iWidth, int iHeight, float iRectSize)
   : rect(iLeft,iTop,iWidth,iHeight)
 {
+  texts.resize(6); //enum size
   rectSize = iRectSize;
-  //TODO: ивенты просто с текстом что делать
-  //TODO: exceptions
   font.loadFromFile(fontFilename);
   sf::Text gameName ("Tetris",font);
   gameName.setFillColor(sf::Color::White);
@@ -27,29 +44,15 @@ TWidgetScore::TWidgetScore(int iLeft, int iTop, int iWidth, int iHeight, float i
   bound = score.getLocalBounds();
   score.setPosition(rect.left + rect.width/2 - bound.width/2,rect.top + rect.height*0.6-bound.height);
 
-  texts.push_back(gameName);
-  texts.push_back(scoreName);
-  texts.push_back(score);
-  squareFieldSize = 4;
-  float startX,startY;
-  startX = rect.left + rectSize;
-  startY = rect.top + rect.height * 0.2;
-  miniGrid.resize(squareFieldSize);
-  for (int i = 0; i < squareFieldSize; i ++) {
-    miniGrid[i].resize(squareFieldSize);
-    for (int j = 0; j < squareFieldSize; j ++) {
-      auto cell = std::make_shared<sf::RectangleShape>(sf::Vector2f(rectSize,rectSize));
-      cell->setFillColor(sf::Color::White);
-      cell->setPosition( startX + i * rectSize, startY + j * rectSize);
-      cell->setOutlineThickness(-TShapes::outlineThick);
-      cell->setOutlineColor(sf::Color::Black);
-      miniGrid[i][j] = cell;
-    }
-  }
+  texts[GameName] = gameName;
+  texts[ScoreName] = scoreName;
+  texts[Score] = score;
+
+  initMiniGrid();
 
 }
 
-void TWidgetScore::markNextShape() {
+void TWidget::markNextShape() {
   for (int i = 0; i < squareFieldSize; i++){
     for (int j = 0; j < squareFieldSize; j++){
       miniGrid[i][j]->setFillColor(sf::Color::Black);
@@ -108,11 +111,11 @@ void TWidgetScore::markNextShape() {
     }
   }
 }
-void TWidgetScore::setNextTShape(std::shared_ptr<TShape> iNextShape) {
+void TWidget::setNextTShape(std::shared_ptr<TShape> iNextShape) {
   nextShape = iNextShape;
   markNextShape();
 }
-void TWidgetScore::draw(sf::RenderTarget &target, sf::RenderStates states) const {
+void TWidget::draw(sf::RenderTarget &target, sf::RenderStates states) const {
   for (const auto& text: texts){
     target.draw(text);
   }
@@ -121,13 +124,13 @@ void TWidgetScore::draw(sf::RenderTarget &target, sf::RenderStates states) const
   }
 }
 
-void TWidgetScore::processEvent(float iTime, int iEventIdx) {
+void TWidget::processEvent(float iTime, int iEventIdx) {
  std::shared_ptr<GEvent> event = events[iEventIdx];
   if (event->type == GEvent::EventType::Text) {
     std::shared_ptr<GEventText> textEvent = std::static_pointer_cast<GEventText>(event);
-    texts.back().setString(textEvent->string);
-    auto bound =  texts.back().getLocalBounds();
-    texts.back().setPosition(rect.left + rect.width/2 - bound.width/2,rect.top + rect.height*0.6-bound.height);
+    texts[Score].setString(textEvent->string);
+    auto bound =  texts[Score].getLocalBounds();
+    texts[Score].setPosition(rect.left + rect.width/2 - bound.width/2,rect.top + rect.height*0.6-bound.height);
 
   }
 }

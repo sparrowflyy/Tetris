@@ -55,7 +55,7 @@ public:
     TField(int iWinWidth, int iWinHeight);
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     void processEvent(float iTime, int iEventIdx) override;
-    void revertLastEvent() override;
+
     ~TField() final;
     void checkField();
     void genRandTShape();

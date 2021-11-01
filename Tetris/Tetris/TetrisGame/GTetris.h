@@ -44,12 +44,15 @@ private:
     ScoreUpdate
 	};
   enum Objects{
-      Backgroud,
+      Background,
       Field,
       Widget
   };
   const int widgetSize = 200;
 	float elapsedTime = 0.0;
 	float fallTime = 0.5;
-  const float motionTime = 0.075;
+  float motionTime = 0.075;
+  int currentScore = 0;
+  int lastScore = 0;
+  const int objectsCount = 3;
 };

@@ -9,8 +9,7 @@ public:
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override {};
 	void addEvent(std::shared_ptr<GEvent> iEvent) { events.push_back(iEvent); }
 	virtual void processEvent(float iTime, int iEventIdx) = 0;
-	virtual void revertLastEvent() = 0;
-    virtual sf::FloatRect getExtents() const {return  {};} ;
+  virtual sf::FloatRect getExtents() const {return  {};} ;
 	virtual ~GObj() {
 		textures.clear();
 		sprites.clear();

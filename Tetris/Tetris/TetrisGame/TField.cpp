@@ -286,9 +286,6 @@ void TField::checkField() {
     }
   }
 }
-void TField::revertLastEvent() {
-
-}
 
 TField::~TField()
 {

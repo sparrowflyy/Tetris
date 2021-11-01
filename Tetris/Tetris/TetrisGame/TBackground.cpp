@@ -29,10 +29,6 @@ void TBackground::processEvent(float iTime, int iEventIdx) {
 
 }
 
-void TBackground::revertLastEvent() {
-
-}
-
 TBackground::~TBackground() {
 
 }

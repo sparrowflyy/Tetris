@@ -4,7 +4,7 @@
 #include "TField.h"
 #include "../GUtils.h"
 #include "TBackground.h"
-#include "TWidgetScore.h"
+#include "TWidget.h"
 
 GTetris::GTetris(int iWinWidth, int iWinHeight, float iFrameTime) {
 	winWidth = iWinWidth;
@@ -13,18 +13,17 @@ GTetris::GTetris(int iWinWidth, int iWinHeight, float iFrameTime) {
   init();
   std::vector<std::string> filenames = {"/home/nik/c++/Tetris/Tetris/Tetris/TetrisGame/Data/back.png"};
   auto background = std::make_shared<TBackground>(winWidth - widgetSize,winHeight, filenames);
-  objects.push_back(background);
 	auto field = std::make_shared<TField>(winWidth - widgetSize, iWinHeight);
-	objects.push_back(field);
-  auto widget = std::make_shared<TWidgetScore>(winWidth - widgetSize,0,widgetSize,winHeight,field->rectSize);
+  auto widget = std::make_shared<TWidget>(winWidth - widgetSize,0,widgetSize,winHeight,field->rectSize);
   widget->setNextTShape(field->nextShape);
-  objects.push_back(widget);
-
+  objects[Background] = background;
+  objects[Field] = field;
+  objects[Widget] = widget;
 }
 
 void GTetris::init() {
+  objects.resize(objectsCount);
   eventsPool.resize(7);
-
   eventsPool[Events::MoveLeft] = std::make_shared<GEventMotion<int>>(Tetris::left);
   eventsPool[Events::MoveRight] = std::make_shared<GEventMotion<int>>(Tetris::right);
   eventsPool[Events::MoveDown] = std::make_shared<GEventMotion<int>>(Tetris::down);
@@ -74,15 +73,20 @@ void GTetris::processEvents(float iTime) {
 void GTetris::postProcess() {
   std::shared_ptr<TField> field = std::static_pointer_cast<TField>(objects[Objects::Field]);
   if (!field->activeShape->alive) {
+    currentScore = field->score;
     bool gameOver = field->isGameOver();
     if (gameOver){
       printf("Game over!\n");
     }
     field->checkField();
     field->genRandTShape();
-    std::shared_ptr<TWidgetScore> widget = std::static_pointer_cast<TWidgetScore>(objects[Objects::Widget]);
+    std::shared_ptr<TWidget> widget = std::static_pointer_cast<TWidget>(objects[Objects::Widget]);
     widget->setNextTShape(field->nextShape);
-   //TODO: decrease fallTime and motionTime if score reach another 1000
+    if (currentScore - lastScore >= 1000) {
+      lastScore = currentScore;
+      fallTime -= 0.01;
+      motionTime -= 0.001;
+    }
   }
   std::static_pointer_cast<GEventText>(eventsPool[Events::ScoreUpdate])->setString(std::to_string(field->score));
   objects[Objects::Widget]->addEvent(eventsPool[Events::ScoreUpdate]);
