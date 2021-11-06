@@ -29,7 +29,7 @@ TWidget::TWidget(int iWinWidth, int iWinHeight, int iScoreWidgetWidth, float iRe
   : rect(iWinWidth-iScoreWidgetWidth,0,iScoreWidgetWidth,iWinHeight)
 {
   state = GameStart;
-  texts.resize(6); //enum size
+  texts.resize(5); //enum size
   rectSize = iRectSize;
   font.loadFromFile(fontFilename);
   //Start widget
@@ -41,6 +41,14 @@ TWidget::TWidget(int iWinWidth, int iWinHeight, int iScoreWidgetWidth, float iRe
   startWidget.setCharacterSize(fontSize*1.1);
   auto bound = startWidget.getLocalBounds();
   startWidget.setPosition((iWinWidth-iScoreWidgetWidth)/2  - bound.width/2,rect.top + bound.height);
+  //Game over Widget
+  sf::Text gameOverWidget ("Press 'R' to restart",font);
+  gameOverWidget.setFillColor(sf::Color::White);
+  gameOverWidget.setOutlineColor(sf::Color::Black);
+  gameOverWidget.setOutlineThickness(2.0);
+  gameOverWidget.setCharacterSize(fontSize*1.1);
+  bound = gameOverWidget.getLocalBounds();
+  gameOverWidget.setPosition((iWinWidth-iScoreWidgetWidth)/2  - bound.width/2,iWinWidth/2 - bound.height);
   //Texts for score part of the widget
   sf::Text gameName ("Tetris",font);
   gameName.setFillColor(sf::Color::White);
@@ -63,6 +71,7 @@ TWidget::TWidget(int iWinWidth, int iWinHeight, int iScoreWidgetWidth, float iRe
   texts[ScoreName] = scoreName;
   texts[Score] = score;
   texts[Start] = startWidget;
+  texts[GameOver] = gameOverWidget;
   initMiniGrid();
 
 }
@@ -132,7 +141,10 @@ void TWidget::setNextTShape(std::shared_ptr<TShape> iNextShape) {
 }
 void TWidget::draw(sf::RenderTarget &target, sf::RenderStates states) const {
   for (int i = 0; i < texts.size(); i++){
-    if (i == Text::Start && state!=GameStart){
+    if (i == Text::Start && state!=State::GameStart){
+      continue;
+    }
+    if (i == Text::GameOver && state!=State::GameIsOver){
       continue;
     }
     target.draw(texts[i]);

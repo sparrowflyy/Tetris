@@ -10,21 +10,17 @@ GTetris::GTetris(int iWinWidth, int iWinHeight, float iFrameTime) {
 	winWidth = iWinWidth;
 	winHeight = iWinHeight;
 	frameTime = iFrameTime;
+  objects.resize(objectsCount);
   init();
-  std::vector<std::string> filenames = {"/home/nik/c++/Tetris/Tetris/Tetris/TetrisGame/Data/back.png"};
-  auto background = std::make_shared<TBackground>(winWidth - widgetSize,winHeight, filenames);
-	auto field = std::make_shared<TField>(winWidth - widgetSize, iWinHeight);
-  auto widget = std::make_shared<TWidget>(winWidth ,winHeight,widgetSize,field->rectSize);
-  widget->setNextTShape(field->nextShape);
-  objects[Background] = background;
-  objects[Field] = field;
-  objects[Widget] = widget;
-}
-
-void GTetris::init() {
   isGameOver = false;
   isGameStarted = false;
-  objects.resize(objectsCount);
+  std::vector<std::string> filenames = {"/home/nik/c++/Tetris/Tetris/Tetris/TetrisGame/Data/back.png"};
+  auto background = std::make_shared<TBackground>(winWidth - widgetSize,winHeight, filenames);
+  objects[Background] = background;
+  std::shared_ptr<TField> field = std::static_pointer_cast<TField>(objects[Objects::Field]);
+  auto widget = std::make_shared<TWidget>(winWidth ,winHeight,widgetSize,field->rectSize);
+  objects[Widget] = widget;
+  widget->setNextTShape(field->nextShape);
   eventsPool.resize(7);
   eventsPool[Events::MoveLeft] = std::make_shared<GEventMotion<int>>(Tetris::left);
   eventsPool[Events::MoveRight] = std::make_shared<GEventMotion<int>>(Tetris::right);
@@ -33,6 +29,12 @@ void GTetris::init() {
   eventsPool[Events::RotateStart] = std::make_shared<TRotationEventStart>();
   eventsPool[Events::RotateEnd] = std::make_shared<TRotationEventEnd>();
   eventsPool[Events::ScoreUpdate] = std::make_shared<GEventText>("0");
+}
+
+void GTetris::init() {
+  auto field = std::make_shared<TField>(winWidth - widgetSize, winHeight);
+  objects[Field] = field;
+
 }
 
 void GTetris::drawObjects(sf::RenderTarget &target, sf::RenderStates states) {
@@ -48,6 +50,18 @@ void GTetris::processKeys(const sf::Event& event, float iTime) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
       isGameStarted = true;
       std::shared_ptr<TWidget> widget = std::static_pointer_cast<TWidget>(objects[Objects::Widget]);
+      widget->setState(TWidget::State::Game);
+    }
+    elapsedTime = 0.0;
+    return;
+  }
+  if (isGameOver){
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
+      isGameOver = false;
+      init();
+      std::shared_ptr<TField> field = std::static_pointer_cast<TField>(objects[Objects::Field]);
+      std::shared_ptr<TWidget> widget = std::static_pointer_cast<TWidget>(objects[Objects::Widget]);
+      widget->setNextTShape(field->nextShape);
       widget->setState(TWidget::State::Game);
     }
     elapsedTime = 0.0;
@@ -76,8 +90,9 @@ void GTetris::processKeys(const sf::Event& event, float iTime) {
 	}
 }
 void GTetris::processEvents(float iTime) {
-  if (!isGameStarted)
+  if (!isGameStarted || isGameOver){
     return;
+  }
 	elapsedTime += iTime;
 	if (elapsedTime > fallTime) {
 		objects[Objects::Field]->addEvent(eventsPool[Events::MoveDown]);
@@ -91,16 +106,21 @@ void GTetris::processEvents(float iTime) {
   }
 }
 void GTetris::postProcess() {
+  if (!isGameStarted || isGameOver){
+    return;
+  }
   std::shared_ptr<TField> field = std::static_pointer_cast<TField>(objects[Objects::Field]);
+  std::shared_ptr<TWidget> widget = std::static_pointer_cast<TWidget>(objects[Objects::Widget]);
   if (!field->activeShape->alive) {
     currentScore = field->score;
-    bool gameOver = field->isGameOver();
-    if (gameOver){
-      printf("Game over!\n");
+    isGameOver = field->isGameOver();
+    if (isGameOver){
+      widget->setState(TWidget::State::GameIsOver);
+      return;
     }
     field->checkField();
     field->genRandTShape();
-    std::shared_ptr<TWidget> widget = std::static_pointer_cast<TWidget>(objects[Objects::Widget]);
+
     widget->setNextTShape(field->nextShape);
     if (currentScore - lastScore >= 1000) {
       lastScore = currentScore;

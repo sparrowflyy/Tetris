@@ -28,7 +28,6 @@ private:
         Score,
         GameOver,
         Start,
-        TryAgain
     };
     void initMiniGrid();
     void markNextShape();
