@@ -4,8 +4,6 @@ project(Tetris)
 set(CMAKE_CXX_STANDARD 17)
 
 find_package(SFML 2.5 COMPONENTS graphics audio REQUIRED)
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -gdwarf-3")
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -gdwarf-3")
 set(PROJECT_HEADERS
         TetrisGame/GTetris.h
         TetrisGame/TField.h

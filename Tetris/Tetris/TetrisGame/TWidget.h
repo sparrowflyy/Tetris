@@ -1,7 +1,6 @@
 //
 // Created by nik on 10.10.2021.
 //
-
 #ifndef TETRIS_TWIDGET_H
 #define TETRIS_TWIDGET_H
 
