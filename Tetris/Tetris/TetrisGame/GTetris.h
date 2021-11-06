@@ -28,6 +28,7 @@ class GTetris final: public GGame
 public:
 	explicit GTetris(int iWinWidth = 600, int iWinHeight = 500, float iFrameTime = 1e-6);
 	void init() override;
+  void drawObjects(sf::RenderTarget &target, sf::RenderStates states) override;
 	void processKeys(const sf::Event& event, float iTime) override;
 	void processEvents(float iTime) override;
 	void postProcess() override;
@@ -44,12 +45,15 @@ private:
     ScoreUpdate
 	};
   enum Objects{
-      Backgroud,
+      Background,
       Field,
       Widget
   };
   const int widgetSize = 200;
 	float elapsedTime = 0.0;
 	float fallTime = 0.5;
-  const float motionTime = 0.075;
+  float motionTime = 0.075;
+  int currentScore = 0;
+  int lastScore = 0;
+  const int objectsCount = 3;
 };

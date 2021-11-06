@@ -10,9 +10,9 @@ namespace TShapes {
     static const int numTypes = 7;
     static sf::Vector2i start{ 8,2 };
     static const std::vector<sf::Color> shapeColors {
-      sf::Color(255,30,30),  //purple
-      sf::Color(204,255,51), //yellow
-      sf::Color(0,255,102),  //green
+      sf::Color(255,90,90),  //red
+      sf::Color(204,255,151), //yellow
+      sf::Color(110,255,102),  //green
       sf::Color(153,153,255), //blue
       sf::Color(255,51,153)  //pink
     };
@@ -55,21 +55,25 @@ public:
     TField(int iWinWidth, int iWinHeight);
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     void processEvent(float iTime, int iEventIdx) override;
-    void revertLastEvent() override;
+
     ~TField() final;
     void checkField();
     void genRandTShape();
-    std::unique_ptr<TShape> activeShape;
+    bool isGameOver();
+    std::shared_ptr<TShape> nextShape;
+    std::shared_ptr<TShape> activeShape;
     int score = 0;
+    float rectSize;
 private:
     const sf::Color backgroundColor = sf::Color::Transparent;
     void copyRowColors(int iRow, int iDestRow);
     bool checkShape(TShape& iShape);
     void markRect(short i, short j, sf::Color const& iColor = sf::Color::Transparent);
     int getMark(short i, short j);
+
     const int bufferSize = 5;
     int fieldWidth = 16; //16
-    int fieldHeight ;
+    int fieldHeight;
+
     std::vector<std::vector<std::shared_ptr<sf::RectangleShape>>> grid;
-    const float motionTime = 0.07;
 };

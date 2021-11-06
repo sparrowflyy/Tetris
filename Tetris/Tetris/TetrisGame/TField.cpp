@@ -136,7 +136,7 @@ void TShape::rotate() {
 }
 TField::TField(int iWinWidth, int iWinHeight)
 {
-  float rectSize = (iWinWidth)/fieldWidth;
+  rectSize = (iWinWidth)/fieldWidth;
   fieldHeight = int(iWinHeight/rectSize) + bufferSize;
   grid.resize(fieldWidth);
 	for (int i = 0; i < fieldWidth; i ++) {
@@ -146,7 +146,6 @@ TField::TField(int iWinWidth, int iWinHeight)
 			cell->setPosition( i * rectSize, (j-bufferSize) * rectSize);
       cell->setFillColor(backgroundColor);
       if (j < bufferSize-1){
-
         grid[i][j] = cell;
         continue;
       }
@@ -157,13 +156,17 @@ TField::TField(int iWinWidth, int iWinHeight)
 
 		}
 	}
-    genRandTShape();
+  genRandTShape();
 }
 void TField::genRandTShape() {
-    activeShape = std::make_unique<TShape>(GUtils::genRandomInt(0, TShapes::numTypes - 1));
-    for (auto& [x,y] : activeShape->indices) {
-        markRect(x,y,activeShape->color);
-    }
+  if (nextShape == nullptr){
+    nextShape = std::make_shared<TShape>(GUtils::genRandomInt(0, TShapes::numTypes - 1));
+  }
+  activeShape = nextShape;
+  nextShape = std::make_shared<TShape>(GUtils::genRandomInt(0, TShapes::numTypes - 1));
+  for (auto& [x,y] : activeShape->indices) {
+    markRect(x,y,activeShape->color);
+  }
 }
 
 void TField::draw(sf::RenderTarget& target, sf::RenderStates states) const {
@@ -204,10 +207,17 @@ bool TField::checkShape(TShape &iShape) {
       }
       return false;
     }
-
-
   }
   return true;
+}
+
+bool TField::isGameOver() {
+  for (auto& [x,y]:activeShape->indices){
+    if (y < bufferSize){
+      return true;
+    }
+  }
+  return false;
 }
 void TField::processEvent(float iTime, int iEventIdx) {
   static float elapsedTime = 0.0;
@@ -254,10 +264,6 @@ void TField::checkField() {
       ++filledCells;
     }
     if (filledCells == fieldWidth) {
-      if (j == 0) {
-        //TODO:: GAME OVER!
-        return;
-      }
       rowsToRemove.push_back(j);
     }
   }
@@ -267,7 +273,9 @@ void TField::checkField() {
   int start = *rowsToRemove.begin();
   int end = *rowsToRemove.rbegin();
   int length = end - start;
-  score+=(1+length*2)*100;
+  int scoreAdd = (1+length*2)*100;
+
+  score+=scoreAdd;
   for (int i = start - 1; i > 0; i-- ) {
     copyRowColors(i,i+length+1);
     copyRowColors(0,i);
@@ -277,14 +285,6 @@ void TField::checkField() {
       markRect(i,j);
     }
   }
-/*  for (int j = bufferSize; j < bufferSize+length; j++) {
-    for (int i = 0; i < fieldWidth; i++) {
-      markRect(i,j);
-    }
-  }*/
-}
-void TField::revertLastEvent() {
-
 }
 
 TField::~TField()
