@@ -22,7 +22,5 @@ public:
 
 	std::vector<std::shared_ptr<sf::Texture>> textures {};
 	std::vector<std::shared_ptr<sf::Sprite>> sprites {};
-  //TODO: shared ptr
 	std::vector<std::shared_ptr<GEvent>> events;
-	
 };

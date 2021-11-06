@@ -21,16 +21,31 @@ void TWidget::initMiniGrid() {
     }
   }
 }
-TWidget::TWidget(int iLeft, int iTop, int iWidth, int iHeight, float iRectSize)
-  : rect(iLeft,iTop,iWidth,iHeight)
+
+void TWidget::setState(int iState) {
+  state = iState;
+}
+TWidget::TWidget(int iWinWidth, int iWinHeight, int iScoreWidgetWidth, float iRectSize)
+  : rect(iWinWidth-iScoreWidgetWidth,0,iScoreWidgetWidth,iWinHeight)
 {
+  state = GameStart;
   texts.resize(6); //enum size
   rectSize = iRectSize;
   font.loadFromFile(fontFilename);
+  //Start widget
+  sf::Text startWidget ("'A' & 'S' : move shape\n'S' : speed up\n'W' : rotate shape"
+                        "\n\n\nPress 'Enter' to start",font);
+  startWidget.setFillColor(sf::Color::White);
+  startWidget.setOutlineColor(sf::Color::Black);
+  startWidget.setOutlineThickness(2.0);
+  startWidget.setCharacterSize(fontSize*1.1);
+  auto bound = startWidget.getLocalBounds();
+  startWidget.setPosition((iWinWidth-iScoreWidgetWidth)/2  - bound.width/2,rect.top + bound.height);
+  //Texts for score part of the widget
   sf::Text gameName ("Tetris",font);
   gameName.setFillColor(sf::Color::White);
   gameName.setCharacterSize(fontSize);
-  auto bound = gameName.getLocalBounds();
+  bound = gameName.getLocalBounds();
   gameName.setPosition(rect.left + rect.width/2 - bound.width/2,rect.top + bound.height);
 
   sf::Text scoreName("Score:",font);
@@ -47,7 +62,7 @@ TWidget::TWidget(int iLeft, int iTop, int iWidth, int iHeight, float iRectSize)
   texts[GameName] = gameName;
   texts[ScoreName] = scoreName;
   texts[Score] = score;
-
+  texts[Start] = startWidget;
   initMiniGrid();
 
 }
@@ -116,8 +131,11 @@ void TWidget::setNextTShape(std::shared_ptr<TShape> iNextShape) {
   markNextShape();
 }
 void TWidget::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-  for (const auto& text: texts){
-    target.draw(text);
+  for (int i = 0; i < texts.size(); i++){
+    if (i == Text::Start && state!=GameStart){
+      continue;
+    }
+    target.draw(texts[i]);
   }
   for (const auto& row: miniGrid) {
     std::for_each(row.begin(), row.end(), [&](const std::shared_ptr<sf::RectangleShape> rect) { target.draw(*rect); });

@@ -28,6 +28,7 @@ class GTetris final: public GGame
 public:
 	explicit GTetris(int iWinWidth = 600, int iWinHeight = 500, float iFrameTime = 1e-6);
 	void init() override;
+  void drawObjects(sf::RenderTarget &target, sf::RenderStates states) override;
 	void processKeys(const sf::Event& event, float iTime) override;
 	void processEvents(float iTime) override;
 	void postProcess() override;

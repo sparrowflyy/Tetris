@@ -16,19 +16,17 @@ void GLoop::loop() {
         return;
       }
     }
+    window.clear();
     sf::Time elapsedTime = clock.getElapsedTime();
     dt += elapsedTime.asSeconds();
-    window.clear();
     game->processKeys(event,dt);
     if (dt >= game->frameTime) {
       game->processEvents(dt);
       dt = 0;
-		  clock.restart();
+      clock.restart();
     }
     game->postProcess();
-    for (auto& obj : game->objects) {
-      obj->draw(window, sf::RenderStates::Default);
-    }
+    game->drawObjects(window,sf::RenderStates::Default);
     window.display();
   }
 }

@@ -14,7 +14,7 @@ GTetris::GTetris(int iWinWidth, int iWinHeight, float iFrameTime) {
   std::vector<std::string> filenames = {"/home/nik/c++/Tetris/Tetris/Tetris/TetrisGame/Data/back.png"};
   auto background = std::make_shared<TBackground>(winWidth - widgetSize,winHeight, filenames);
 	auto field = std::make_shared<TField>(winWidth - widgetSize, iWinHeight);
-  auto widget = std::make_shared<TWidget>(winWidth - widgetSize,0,widgetSize,winHeight,field->rectSize);
+  auto widget = std::make_shared<TWidget>(winWidth ,winHeight,widgetSize,field->rectSize);
   widget->setNextTShape(field->nextShape);
   objects[Background] = background;
   objects[Field] = field;
@@ -22,6 +22,8 @@ GTetris::GTetris(int iWinWidth, int iWinHeight, float iFrameTime) {
 }
 
 void GTetris::init() {
+  isGameOver = false;
+  isGameStarted = false;
   objects.resize(objectsCount);
   eventsPool.resize(7);
   eventsPool[Events::MoveLeft] = std::make_shared<GEventMotion<int>>(Tetris::left);
@@ -33,9 +35,25 @@ void GTetris::init() {
   eventsPool[Events::ScoreUpdate] = std::make_shared<GEventText>("0");
 }
 
+void GTetris::drawObjects(sf::RenderTarget &target, sf::RenderStates states) {
+  for (auto& obj : objects) {
+    obj->draw(target, sf::RenderStates::Default);
+  }
+}
+
 void GTetris::processKeys(const sf::Event& event, float iTime) {
   static float elapsedTime = 0.0;
   elapsedTime += iTime;
+  if (!isGameStarted) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+      isGameStarted = true;
+      std::shared_ptr<TWidget> widget = std::static_pointer_cast<TWidget>(objects[Objects::Widget]);
+      widget->setState(TWidget::State::Game);
+    }
+    elapsedTime = 0.0;
+    return;
+  }
+
   if (elapsedTime > motionTime) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
       objects[Objects::Field]->addEvent(eventsPool[Events::MoveLeft]);
@@ -58,6 +76,8 @@ void GTetris::processKeys(const sf::Event& event, float iTime) {
 	}
 }
 void GTetris::processEvents(float iTime) {
+  if (!isGameStarted)
+    return;
 	elapsedTime += iTime;
 	if (elapsedTime > fallTime) {
 		objects[Objects::Field]->addEvent(eventsPool[Events::MoveDown]);

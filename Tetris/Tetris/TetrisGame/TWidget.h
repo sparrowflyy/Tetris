@@ -10,10 +10,16 @@
 
 class TWidget: public GObj {
 public:
-    TWidget(int iLeft, int iTop, int iWidth, int iHeight, float iRectSize);
+    enum State {
+        GameStart,
+        Game,
+        GameIsOver
+    };
+    TWidget(int iWinWidth, int iWinHeight, int iScoreWidgetWidth, float iRectSize);
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-    void processEvent(float iTime, int iEventIdx) override;;
+    void processEvent(float iTime, int iEventIdx) override;
     void setNextTShape(std::shared_ptr<TShape> iNextShape);
+    void setState(int iState);
     ~TWidget() final = default;
 private:
     enum Text{
@@ -26,6 +32,7 @@ private:
     };
     void initMiniGrid();
     void markNextShape();
+    int state;
     float rectSize;
     float squareFieldSize;
     std::shared_ptr<TShape> nextShape;
