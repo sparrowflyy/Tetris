@@ -25,7 +25,7 @@ void TBackground::draw(sf::RenderTarget &target, sf::RenderStates states) const 
     target.draw(*back);
 }
 
-void TBackground::processEvent(float iTime, int iEventIdx) {
+void TBackground::processEvent(int iEventIdx) {
 
 }
 

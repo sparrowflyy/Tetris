@@ -9,7 +9,7 @@ class TBackground: public GObj {
 public:
     TBackground(int iWinWidth, int iWinHeight, const std::vector<std::string>& iFileNames);
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-    void processEvent(float iTime, int iEventIdx) override;
+    void processEvent(int iEventIdx) override;
 
     ~TBackground() final;
 };
