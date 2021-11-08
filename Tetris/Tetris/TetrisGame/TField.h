@@ -51,11 +51,9 @@ public:
 };
 class TField final : public GObj {
 public:
-    //TODO : Deal with background, something wrong...
     TField(int iWinWidth, int iWinHeight);
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-    void processEvent(float iTime, int iEventIdx) override;
-
+    void processEvent(int iEventIdx) override;
     ~TField() final;
     void checkField();
     void genRandTShape();
@@ -63,6 +61,7 @@ public:
     std::shared_ptr<TShape> nextShape;
     std::shared_ptr<TShape> activeShape;
     int score = 0;
+
     float rectSize;
 private:
     const sf::Color backgroundColor = sf::Color::Transparent;
@@ -70,10 +69,9 @@ private:
     bool checkShape(TShape& iShape);
     void markRect(short i, short j, sf::Color const& iColor = sf::Color::Transparent);
     int getMark(short i, short j);
-
+    bool rotationForbidden = false;
     const int bufferSize = 5;
     int fieldWidth = 16; //16
     int fieldHeight;
-
     std::vector<std::vector<std::shared_ptr<sf::RectangleShape>>> grid;
 };

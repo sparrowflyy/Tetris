@@ -16,7 +16,7 @@ public:
     };
     TWidget(int iWinWidth, int iWinHeight, int iScoreWidgetWidth, float iRectSize);
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-    void processEvent(float iTime, int iEventIdx) override;
+    void processEvent(int iEventIdx) override;
     void setNextTShape(std::shared_ptr<TShape> iNextShape);
     void setState(int iState);
     ~TWidget() final = default;

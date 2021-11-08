@@ -1,6 +1,6 @@
 #pragma once
 #include "GObj.h"
-
+#include "GTimer.h"
 
 class GGame
 {
@@ -8,12 +8,11 @@ public:
 
 	virtual void init() = 0;
   virtual void drawObjects(sf::RenderTarget &target, sf::RenderStates states) = 0;
-	virtual void processKeys(const sf::Event& event, float iTime) = 0;
-	virtual void processEvents(float iTime) = 0;
+	virtual void processKeys(const sf::Event& event) = 0;
+	virtual void processEvents() = 0;
 	virtual void postProcess() = 0;
   virtual ~GGame() noexcept { objects.clear(); eventsPool.clear();}
-
-	float frameTime;
+  GTimer timer;
 	int winWidth;
 	int winHeight;
 

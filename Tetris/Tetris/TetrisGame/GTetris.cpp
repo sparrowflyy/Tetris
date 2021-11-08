@@ -9,7 +9,6 @@
 GTetris::GTetris(int iWinWidth, int iWinHeight, float iFrameTime) {
 	winWidth = iWinWidth;
 	winHeight = iWinHeight;
-	frameTime = iFrameTime;
   objects.resize(objectsCount);
   init();
   isGameOver = false;
@@ -29,6 +28,8 @@ GTetris::GTetris(int iWinWidth, int iWinHeight, float iFrameTime) {
   eventsPool[Events::RotateStart] = std::make_shared<TRotationEventStart>();
   eventsPool[Events::RotateEnd] = std::make_shared<TRotationEventEnd>();
   eventsPool[Events::ScoreUpdate] = std::make_shared<GEventText>("0");
+  timer.addEvent("Fall",fallTime);
+  timer.addEvent("Motion",motionTime);
 }
 
 void GTetris::init() {
@@ -43,64 +44,59 @@ void GTetris::drawObjects(sf::RenderTarget &target, sf::RenderStates states) {
   }
 }
 
-void GTetris::processKeys(const sf::Event& event, float iTime) {
-  static float elapsedTime = 0.0;
-  elapsedTime += iTime;
+void GTetris::processKeys(const sf::Event& event) {
+
   if (!isGameStarted) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
       isGameStarted = true;
       std::shared_ptr<TWidget> widget = std::static_pointer_cast<TWidget>(objects[Objects::Widget]);
       widget->setState(TWidget::State::Game);
     }
-    elapsedTime = 0.0;
     return;
   }
+  std::shared_ptr<TField> field = std::static_pointer_cast<TField>(objects[Objects::Field]);
   if (isGameOver){
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
       isGameOver = false;
       init();
-      std::shared_ptr<TField> field = std::static_pointer_cast<TField>(objects[Objects::Field]);
       std::shared_ptr<TWidget> widget = std::static_pointer_cast<TWidget>(objects[Objects::Widget]);
       widget->setNextTShape(field->nextShape);
       widget->setState(TWidget::State::Game);
     }
-    elapsedTime = 0.0;
     return;
   }
-
-  if (elapsedTime > motionTime) {
+  if (timer.isEventReady("Motion")) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-      objects[Objects::Field]->addEvent(eventsPool[Events::MoveLeft]);
+      field->addEvent(eventsPool[Events::MoveLeft]);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-      objects[Objects::Field]->addEvent(eventsPool[Events::MoveRight]);
+      field->addEvent(eventsPool[Events::MoveRight]);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-      objects[Objects::Field]->addEvent(eventsPool[Events::MoveDown]);
+      field->addEvent(eventsPool[Events::MoveDown]);
     }
-    elapsedTime = 0.0;
   }
 	if (event.type == sf::Event::KeyReleased) {
 		if (event.key.code == sf::Keyboard::W) {
-			objects[Objects::Field]->addEvent(eventsPool[Events::RotateEnd]);
+      field->addEvent(eventsPool[Events::RotateEnd]);
 		}
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-		objects[Objects::Field]->addEvent(eventsPool[Events::RotateStart]);
+    if (!field->activeShape->rotating)
+      field->addEvent(eventsPool[Events::RotateStart]);
 	}
 }
-void GTetris::processEvents(float iTime) {
+void GTetris::processEvents() {
+
   if (!isGameStarted || isGameOver){
     return;
   }
-	elapsedTime += iTime;
-	if (elapsedTime > fallTime) {
+  if (timer.isEventReady("Fall")){
 		objects[Objects::Field]->addEvent(eventsPool[Events::MoveDown]);
-		elapsedTime = 0.0;
-	}
+  }
   for (auto & obj : objects) {
     for (int i = 0; i < obj->events.size(); i++) {
-      obj->processEvent(iTime, i);
+      obj->processEvent(i);
     }
     obj->events.clear();
   }

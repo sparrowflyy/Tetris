@@ -154,7 +154,7 @@ void TWidget::draw(sf::RenderTarget &target, sf::RenderStates states) const {
   }
 }
 
-void TWidget::processEvent(float iTime, int iEventIdx) {
+void TWidget::processEvent(int iEventIdx) {
  std::shared_ptr<GEvent> event = events[iEventIdx];
   if (event->type == GEvent::EventType::Text) {
     std::shared_ptr<GEventText> textEvent = std::static_pointer_cast<GEventText>(event);

@@ -159,6 +159,7 @@ TField::TField(int iWinWidth, int iWinHeight)
   genRandTShape();
 }
 void TField::genRandTShape() {
+  rotationForbidden = false;
   if (nextShape == nullptr){
     nextShape = std::make_shared<TShape>(GUtils::genRandomInt(0, TShapes::numTypes - 1));
   }
@@ -202,7 +203,7 @@ bool TField::checkShape(TShape &iShape) {
       return false;
     }
     if (getMark(x,y) == Cell::Shape) {
-      if (activeShape->indices[i].second < y && !iShape.rotating) {
+      if (activeShape->indices[i].second < y && (!iShape.rotating || rotationForbidden)) {
         activeShape->alive = false;
       }
       return false;
@@ -219,9 +220,7 @@ bool TField::isGameOver() {
   }
   return false;
 }
-void TField::processEvent(float iTime, int iEventIdx) {
-  static float elapsedTime = 0.0;
-  elapsedTime+=iTime;
+void TField::processEvent(int iEventIdx) {
   TShape activeShapeCopy = *activeShape.get();
   for (auto& [x,y]:activeShape->indices){
     markRect(x,y);
@@ -234,14 +233,18 @@ void TField::processEvent(float iTime, int iEventIdx) {
   if (event->type == GEvent::EventType::MotionEnd && activeShapeCopy.moving) {
     activeShapeCopy.moving = false;
   }
-  if (event->type == GEvent::EventType::RotationStart && !activeShapeCopy.rotating) {
-    activeShapeCopy.rotate();
-  }
-  if (event->type == GEvent::EventType::RotationEnd && activeShapeCopy.rotating) {
+  if (event->type == GEvent::EventType::RotationEnd && activeShape->rotating) {
     activeShapeCopy.rotating = false;
+    rotationForbidden = false;
+  }
+  if (event->type == GEvent::EventType::RotationStart && !rotationForbidden) {
+    activeShapeCopy.rotate();
   }
   if (checkShape(activeShapeCopy)){
     activeShape = std::make_unique<TShape>(activeShapeCopy);
+  }
+  if (activeShape->rotating) {
+    rotationForbidden = true;
   }
   for (auto& [x,y]:activeShape->indices){
     markRect(x,y,activeShape->color);
